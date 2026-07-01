@@ -17,14 +17,14 @@
 
 **Definición**: agrupación lógica de componentes y funcionalidades de un sistema.
 
-![Capas verticales y horizontales (transversales)](Clase04_imagenes/pag-04.png)
+![Capas verticales y horizontales (transversales)](imagenes/Clase04_imagenes/pag-04.png)
 
 - **Capas Verticales**: capas que se apilan secuencialmente (Layer N-1, N, N+1).
 - **Capas Horizontales o transversales**: capas que atraviesan a todas las demás (ej. Layer A, Layer B).
 
 **Comunicación entre Layers:**
 
-![Downcall y Upcall entre capas](Clase04_imagenes/pag-05.png)
+![Downcall y Upcall entre capas](imagenes/Clase04_imagenes/pag-05.png)
 
 - **Downcall**: invocación de una capa superior hacia una inferior (con o sin respuesta).
 - **Upcall** (excepcional): invocación de una capa inferior hacia una superior.
@@ -33,28 +33,28 @@
 
 **Ejemplo de Layers** (capas verticales Presentation/API → Services → Core Business → Persistence, atravesadas por capas horizontales Security y Audit):
 
-![Ejemplo de capas: Presentation, API, Services, Core Business, Persistence, Security, Audit](Clase04_imagenes/pag-07.png)
+![Ejemplo de capas: Presentation, API, Services, Core Business, Persistence, Security, Audit](imagenes/Clase04_imagenes/pag-07.png)
 
 **Ejemplo: Onion Architecture / Clean Architecture** — capas concéntricas: Entities (núcleo) → Use Cases → Interface Adapters (Controllers, Presenters, Gateways) → Frameworks & Drivers (Web, DB, Devices, External Interfaces, UI):
 
-![Clean Architecture de Bob Martin](Clase04_imagenes/pag-08.png)
+![Clean Architecture de Bob Martin](imagenes/Clase04_imagenes/pag-08.png)
 
 ### Tiers
 
 **Definición**: describen la distribución **física** de componentes y funcionalidad de un sistema.
 
-![Deployment Tiers conectados](Clase04_imagenes/pag-09.png)
+![Deployment Tiers conectados](imagenes/Clase04_imagenes/pag-09.png)
 
 **Ejemplos de despliegue:**
 
-![2-Tier vs 3-Tier Deployment](Clase04_imagenes/pag-10.png)
+![2-Tier vs 3-Tier Deployment](imagenes/Clase04_imagenes/pag-10.png)
 
 - **2-Tier**: Client Tier → Database Tier.
 - **3-Tier**: Client Tier → Business Logic Tier → Database Tier.
 
 **Despliegue de Layers sobre Tiers**: las layers lógicas (Presentation, API, Services, Core Business, Persistence, Audit, Security) se distribuyen físicamente entre Client Tier, Application Tier, Business Logic Tier y Database Tier:
 
-![Despliegue físico de las capas lógicas](Clase04_imagenes/pag-11.png)
+![Despliegue físico de las capas lógicas](imagenes/Clase04_imagenes/pag-11.png)
 
 ---
 
@@ -105,7 +105,7 @@ Ejemplo (Wikipedia/Wikimedia REST API):
 
 ### Modelo HTTP
 
-![Modelo Client-Server con HTTP Request/Response](Clase04_imagenes/pag-19.png)
+![Modelo Client-Server con HTTP Request/Response](imagenes/Clase04_imagenes/pag-19.png)
 
 Características:
 - Modelo **Client-Server**.
@@ -114,13 +114,13 @@ Características:
 
 ### Responsabilidades por capa
 
-![PDUs intercambiadas por capa entre Node 1 y Node 2](Clase04_imagenes/pag-20.png)
+![PDUs intercambiadas por capa entre Node 1 y Node 2](imagenes/Clase04_imagenes/pag-20.png)
 
 Cada capa de un nodo se comunica lógicamente con su par equivalente en el otro nodo, intercambiando su propia **PDU** (Protocol Data Unit), aunque físicamente los datos bajan y suben por la pila de capas locales (Application → Services → Core → Communication → Transport → Internet → Network Access).
 
 ### Protocol Data Unit (PDUs)
 
-![Encapsulación exacta de PDUs entre capas (User Data, TCP header, IP header, Net header)](Clase04_imagenes/pag-21.png)
+![Encapsulación exacta de PDUs entre capas (User Data, TCP header, IP header, Net header)](imagenes/Clase04_imagenes/pag-21.png)
 
 Encapsulación de PDUs entre capas, con tres estrategias posibles:
 1. **Encapsulación exacta**: cada capa agrega su propio header al payload de la capa superior.
@@ -129,7 +129,7 @@ Encapsulación de PDUs entre capas, con tres estrategias posibles:
 
 ### Ejemplos de Protocolos por capa
 
-![Pila de protocolos: FTP/HTTP/SMTP/DNS/RSVP sobre TCP/UDP/ICMP sobre IP sobre Ethernet/Fiber/Token Ring](Clase04_imagenes/pag-22.png)
+![Pila de protocolos: FTP/HTTP/SMTP/DNS/RSVP sobre TCP/UDP/ICMP sobre IP sobre Ethernet/Fiber/Token Ring](imagenes/Clase04_imagenes/pag-22.png)
 
 - **Application**: FTP, HTTP, SMTP, DNS, RSVP.
 - **Transport**: TCP, UDP (también ICMP a nivel Internet).
@@ -138,7 +138,7 @@ Encapsulación de PDUs entre capas, con tres estrategias posibles:
 
 ### Ejemplo: Múltiples Canales
 
-![alt text](image-16.png)
+![alt text](imagenes/image-16.png)
 
 Caso de uso: una bolsa de comercio recibe información de muchos operadores distribuidos, con tráfico de paquetes con picos de transferencia.
 - Canales **UDP** para garantizar throughput (aún con repetidos).
@@ -172,7 +172,7 @@ Ejemplo (cURL + HTTP): un comando `curl -X POST -d '{"username":"lalala","passwo
 
 **Ejemplo: TLV (Type-Length-Value)**
 
-![alt text](image-17.png)
+![alt text](imagenes/image-17.png)
 
 Todos los parámetros siguen el formato **Type - Length - Value**:
 - **Type**: indica el tipo de dato/entidad. Tamaño fijo.
@@ -181,19 +181,19 @@ Todos los parámetros siguen el formato **Type - Length - Value**:
 
 **Ejemplo: TFTP**
 
-![Estructura de paquetes TFTP: Read/Write, Data y ACK](Clase04_imagenes/pag-30.png)
+![Estructura de paquetes TFTP: Read/Write, Data y ACK](imagenes/Clase04_imagenes/pag-30.png)
 
 - **Read/Write Packet**: Opcode (1/2) + Filename + 0 + Mode + 0.
 - **Data Packet**: Opcode (3) + Block# + Data.
 - **ACK Packet**: Opcode (4) + Block#.
 
-![Intercambio de mensajes TFTP entre client y server](Clase04_imagenes/pag-31.png)
+![Intercambio de mensajes TFTP entre client y server](imagenes/Clase04_imagenes/pag-31.png)
 
 El cliente solicita un archivo (`Opcode 1, read`), el servidor responde con bloques de datos (`Opcode 3`) que el cliente confirma con ACKs (`Opcode 4`). El último bloque de datos (con menos de 512 bytes, o incluso 0 bytes) indica el fin de la transferencia.
 
 ### Sincronización de señales
 
-![alt text](image-18.png)
+![alt text](imagenes/image-18.png)
 
 En ciertos protocolos es necesario saber dónde empieza una señal para entender la secuencia de paquetes. 
 
@@ -204,7 +204,7 @@ Ejemplo de bajo nivel: el sensor **DHT11** (humedad y temperatura) envía datos 
 - **Sincrónico**: el cliente queda bloqueado (Active) esperando la respuesta del servidor.
 - **Asincrónico**: el cliente queda libre (Idle) tras enviar el request, y retoma actividad al recibir la respuesta.
 
-![alt text](image-19.png)
+![alt text](imagenes/image-19.png)
 
 ---
 

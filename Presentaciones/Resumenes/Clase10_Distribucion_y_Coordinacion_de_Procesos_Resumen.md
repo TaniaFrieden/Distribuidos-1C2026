@@ -2,7 +2,7 @@
 
 ## 1. Coordinación de Actividades
 
-![Coordinación, Replicación y Acceso a Recursos Compartidos](Clase10_imagenes/pag-03.png)
+![Coordinación, Replicación y Acceso a Recursos Compartidos](imagenes/Clase10_imagenes/pag-03.png)
 
 - **Coordinación**: una tarea T se **divide, despacha y difunde** en subtareas (T1, T2, T3) que se ejecutan en paralelo produciendo resultados parciales (R1, R2, R3), que luego se **consolidan** en un resultado final R.
 - **Replicación**: una misma tarea T se **difunde** idéntica a múltiples ejecutores, que la ejecutan de forma redundante, y los resultados (todos iguales, R) se consolidan en uno solo.
@@ -29,7 +29,7 @@
 
 ### Arquitectura Naive
 
-![Client enviando items a Map Workers, que pasan a Reduce Workers, generando Output](Clase10_imagenes/pag-07.png)
+![Client enviando items a Map Workers, que pasan a Reduce Workers, generando Output](imagenes/Clase10_imagenes/pag-07.png)
 
 ### Parallel Computing — Caso ideal (Master-Worker)
 
@@ -54,7 +54,7 @@
 
 ### Arquitectura completa
 
-![Client hace fork hacia un Master que asigna tareas a Map Workers (con archivos intermedios IF) y Reduce Workers](Clase10_imagenes/pag-11.png)
+![Client hace fork hacia un Master que asigna tareas a Map Workers (con archivos intermedios IF) y Reduce Workers](imagenes/Clase10_imagenes/pag-11.png)
 
 ### Pasos del proceso MapReduce
 
@@ -63,7 +63,7 @@
 3. **Paso 3 — Map de Shards en Mappers**: el worker lee el Input data, filtra los datos recibidos en formato key/value, y ejecuta la función provista por el usuario sobre cada par que pasó el filtro, produciendo un *valor intermedio* por cada par.
 4. **Paso 4a — Creación de Archivos Intermedios (IF)**:
 
-   ![Map Worker procesando un Chunk y generando un archivo Intermedio (IF)](Clase10_imagenes/pag-15.png)
+   ![Map Worker procesando un Chunk y generando un archivo Intermedio (IF)](imagenes/Clase10_imagenes/pag-15.png)
 
    Cada key/value intermedio producido es *bufferizado* y escrito periódicamente en disco local. La data es particionada en R regiones usando una función de particionamiento. El Map Worker notifica al proceso master cuando termina de procesar el chunk y le envía la ubicación del archivo intermedio; el master envía la ubicación de los IF a los Reduce workers.
 
@@ -71,13 +71,13 @@
 
 6. **Paso 5**:
 
-   ![Reduce Workers reciben datos intermedios de múltiples Map Workers vía RPC](Clase10_imagenes/pag-17.png)
+   ![Reduce Workers reciben datos intermedios de múltiples Map Workers vía RPC](imagenes/Clase10_imagenes/pag-17.png)
 
    Los Reduce Workers reciben la ubicación de los archivos intermedios para la partición que deben procesar (usando **RPC** para leer la data del disco local de los Mappers). Al recibir la data intermedia, ordenan la data por key y agrupan todas las ocurrencias de la misma key.
 
 7. **Paso 6**:
 
-   ![Reduce Worker combinando múltiples archivos intermedios (IF) en un Output File](Clase10_imagenes/pag-18.png)
+   ![Reduce Worker combinando múltiples archivos intermedios (IF) en un Output File](imagenes/Clase10_imagenes/pag-18.png)
 
    El Reduce worker lee la data agrupada por Key, aplica la función `Reduce` del usuario sobre cada set de datos, y el output de la función es almacenado en un *output file*. Se despierta al proceso del usuario indicándole la ubicación de los output files.
 
@@ -168,7 +168,7 @@ reduce(string key, list value):
 
 ### Introducción
 
-![Master Node ejecutando mpirun que coordina varios Nodes con procesos mpi](Clase10_imagenes/pag-33.png)
+![Master Node ejecutando mpirun que coordina varios Nodes con procesos mpi](imagenes/Clase10_imagenes/pag-33.png)
 
 - Basado en **transmisión y recepción de mensajes**.
 - Ejecución transparente de 1 a N nodos.
@@ -187,7 +187,7 @@ Ejemplo de uso (`mpirun -np 4 ./main`): el proceso con `world_rank == 0` envía 
 
 ### Scatter, Gather
 
-![MPI_Scatter distribuye datos del proceso 0 a 0,1,2,3; MPI_Gather los recolecta de vuelta al proceso 0](Clase10_imagenes/pag-35.png)
+![MPI_Scatter distribuye datos del proceso 0 a 0,1,2,3; MPI_Gather los recolecta de vuelta al proceso 0](imagenes/Clase10_imagenes/pag-35.png)
 
 ```c
 MPI_Scatter(void* send_data, int send_count, MPI_Datatype send_datatype,
@@ -204,7 +204,7 @@ MPI_Gather(void* send_data, int send_count, MPI_Datatype send_datatype,
 
 ### AllGather, Reduce
 
-![MPI_Allgather distribuye datos de todos a todos; MPI_Reduce combina datos de todos los procesos en uno (MPI_SUM)](Clase10_imagenes/pag-36.png)
+![MPI_Allgather distribuye datos de todos a todos; MPI_Reduce combina datos de todos los procesos en uno (MPI_SUM)](imagenes/Clase10_imagenes/pag-36.png)
 
 ```c
 MPI_Allgather(void* send_data, int send_count, MPI_Datatype send_datatype,
@@ -250,7 +250,7 @@ stats.addSink(new RollingSink(path));                                           
 
 ### Bloques de un Pipeline
 
-![Pipeline de Flink: Source -> map() -> keyBy/window/apply -> Sink](Clase10_imagenes/pag-40.png)
+![Pipeline de Flink: Source -> map() -> keyBy/window/apply -> Sink](imagenes/Clase10_imagenes/pag-40.png)
 
 - **Source**: bloque capaz de inyectar datos al pipeline.
 - **Transformation** (operador): nodo de modificación de datos o filtrado de los mismos.
@@ -258,20 +258,20 @@ stats.addSink(new RollingSink(path));                                           
 
 ### Ventanas para Streaming
 
-![Time windows y Count windows sobre un event stream; arquitectura con Event Producer, Message Queue, Flink Data Source y Window Operator](Clase10_imagenes/pag-41.png)
+![Time windows y Count windows sobre un event stream; arquitectura con Event Producer, Message Queue, Flink Data Source y Window Operator](imagenes/Clase10_imagenes/pag-41.png)
 
 Flink permite agrupar eventos de un stream en **ventanas** (por tiempo o por cantidad de eventos), considerando distintas nociones de tiempo: *Event Time* (cuando ocurrió el evento), *Ingestion Time* (cuando ingresó a Flink) y *Window Processing Time* (cuando se procesa la ventana).
 
 ### Casos de Uso
 
-![Periodic ETL: lee de una DB transaccional y escribe a otra DB/filesystem; Data Pipeline: ingiere eventos en tiempo real con una Continuous Application con estado](Clase10_imagenes/pag-42.png)
+![Periodic ETL: lee de una DB transaccional y escribe a otra DB/filesystem; Data Pipeline: ingiere eventos en tiempo real con una Continuous Application con estado](imagenes/Clase10_imagenes/pag-42.png)
 
 - **Extract Transform Load (ETL)**: operaciones programadas de carga y modificación de datos para su posterior análisis, con origen y destino definidos en una base de datos.
 - **Data Pipelines**: tareas de procesamiento recurrentes, basadas en la ocurrencia de eventos (en tiempo real).
 
 ### Ejemplo: Ecosistema de Big Data con Flink
 
-![Eventos en tiempo real y datos batch alimentando Event-driven Applications, Streaming Pipelines y Stream & Batch Analytics, sobre recursos como K8s/Yarn/Mesos y storage como HDFS/S3/NFS](Clase10_imagenes/pag-43.png)
+![Eventos en tiempo real y datos batch alimentando Event-driven Applications, Streaming Pipelines y Stream & Batch Analytics, sobre recursos como K8s/Yarn/Mesos y storage como HDFS/S3/NFS](imagenes/Clase10_imagenes/pag-43.png)
 
 Flink puede usarse como motor central de un ecosistema de Big Data, combinando fuentes en tiempo real (transacciones, logs, IoT, clicks) y fuentes batch (DB, filesystem, KV-Store), produciendo aplicaciones, event logs y bases de datos de salida, todo corriendo sobre infraestructura de recursos (K8s, Yarn, Mesos) y almacenamiento (HDFS, S3, NFS).
 

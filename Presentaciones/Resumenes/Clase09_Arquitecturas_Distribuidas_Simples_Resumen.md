@@ -8,15 +8,15 @@
 - Permite **centralización** en la toma de decisiones.
 - Suele asumirse que los servidores tienen más capacidades de hardware que los clientes.
 
-![alt text](image-42.png)
+![alt text](imagenes/image-42.png)
 
 También puede organizarse de forma **jerárquica**, con servidores intermedios que a su vez actúan como clientes de un servidor superior:
 
-![alt text](image-43.png)
+![alt text](imagenes/image-43.png)
 
 ### Flujos de Comunicación
 
-![alt text](image-44.png)
+![alt text](imagenes/image-44.png)
 
 - Los clientes deben conocer la **ubicación del servidor** para poder utilizarlo.
 - Los clientes **no entablan comunicaciones entre sí**, salvo a través del servidor (ej. `msg-for-2` de Client 1 al Server, que el Server reenvía a Client 2 como `msg-from-1`).
@@ -28,7 +28,7 @@ También puede organizarse de forma **jerárquica**, con servidores intermedios 
 
 ## 2. Peer-to-Peer
 
-![alt text](image-45.png)
+![alt text](imagenes/image-45.png)
 
 - Se establece una red de nodos que se consideran **pares (peers)** entre sí.
 - Asume capacidades de recursos **similares** entre los pares.
@@ -39,7 +39,7 @@ También puede organizarse de forma **jerárquica**, con servidores intermedios 
 
 ### Flujos de Comunicación
 
-![alt text](image-46.png)
+![alt text](imagenes/image-46.png)
 
 - Es **muy difícil** de establecer la comunicación entre pares directamente, por lo que se suele usar:
   - Un **esquema mixto** tipo cliente-servidor para proveer un **servicio de nombres** (descubrimiento de otros peers).
@@ -50,7 +50,7 @@ También puede organizarse de forma **jerárquica**, con servidores intermedios 
 
 ## 3. RPC (Remote Procedure Call)
 
-![alt text](image-48.png)
+![alt text](imagenes/image-48.png)
 
 - Permite la **ejecución remota de procedimientos**.
 - Modelo Cliente-Servidor:
@@ -94,13 +94,13 @@ Según las estrategias adoptadas para asegurar el *delivery* de mensajes, los me
 - **Stubs**: administran el *marshalling* de la información; envían información de llamadas (*calls*) al módulo de comunicación y al cliente/servidor.
 - **Módulo de comunicación**: abstrae al *stub* de la comunicación con el servidor.
 
-![Flujo detallado de una llamada RPC: Procedure, Marshal, Send/Receive, Transmit, Unmarshal, ReturnCall](Clase09_imagenes/pag-16.png)
+![Flujo detallado de una llamada RPC: Procedure, Marshal, Send/Receive, Transmit, Unmarshal, ReturnCall](imagenes/Clase09_imagenes/pag-16.png)
 
 El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el stub realiza el `Marshal()` de los parámetros → se hace `Send()`/`Transmit()` hacia el servidor → el stub del servidor hace `Receive()`/`Unmarshal()` → se invoca el `Procedure()` real en el servidor → la respuesta vuelve siguiendo el camino inverso (`Marshal()` → `Send()` → `Transmit()` → `Receive()` → `Unmarshal()` → `ReturnCall()`).
 
 ### gRPC
 
-![alt text](image-49.png)
+![alt text](imagenes/image-49.png)
 
 - Definición de RPC basada en:
   - **HTTP2** para transporte.
@@ -114,7 +114,7 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ## 4. Distributed Objects (Objetos Distribuidos)
 
-![alt text](image-50.png)
+![alt text](imagenes/image-50.png)
 
 - Los servidores ya no proveen **servicios** sino **objetos**.
 - Existe un **middleware** que oculta la complejidad de:
@@ -125,14 +125,14 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ### RPC vs Objetos Distribuidos
 
-![Comparación Stateless (RPC Locator) vs Stateful (Dispatcher con migración/replicación de objetos)](Clase09_imagenes/pag-20.png)
+![Comparación Stateless (RPC Locator) vs Stateful (Dispatcher con migración/replicación de objetos)](imagenes/Clase09_imagenes/pag-20.png)
 
 - **RPC** (Stateless): el cliente local invoca procedimientos remotos a través de un *RPC Locator*, sin mantener estado de objetos particulares.
 - **Objetos Distribuidos** (Stateful): el cliente invoca métodos sobre objetos específicos (ej. `obj1.m()`) que pueden ser **migrados o replicados** entre distintos servidores remotos, manteniendo su estado.
 
 ### CORBA
 
-![alt text](image-51.png)
+![alt text](imagenes/image-51.png)
 
 - Estándar definido por comité, con soporte en múltiples lenguajes.
 - Actualmente **en vías de deprecación**.
@@ -151,7 +151,7 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ### RMI (Remote Method Invocation)
 
-![alt text](image-52.png)
+![alt text](imagenes/image-52.png)
 
 - Versión optimizada de Distributed Objects, propia de **Java**.
 - Requiere los siguientes pasos:

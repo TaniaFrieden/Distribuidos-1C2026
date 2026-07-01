@@ -6,7 +6,7 @@
 
 Un **fallo (fault)** es la causa raíz, que puede generar un **error** (estado incorrecto interno del sistema), que a su vez puede manifestarse como una **falla (failure)**, es decir, una desviación observable del comportamiento esperado del sistema. No todo fault deriva necesariamente en error, ni todo error deriva necesariamente en failure (puede ser enmascarado).
 
-![Cadena Fault-Error-Failure](Clase17_imagenes/pag-04.png)
+![Cadena Fault-Error-Failure](imagenes/Clase17_imagenes/pag-04.png)
 
 Se presentan ejemplos de esta cadena: por ejemplo, un bug en el código (fault) puede producir un cálculo incorrecto (error) que finalmente se traduce en una respuesta errónea al usuario (failure).
 
@@ -28,7 +28,7 @@ Y según el **tipo de comportamiento incorrecto** que producen:
 - **Response (valor o estado)**: el componente responde, pero con un valor incorrecto o transicionando a un estado incorrecto.
 - **Byzantine (arbitrario)**: el componente puede producir cualquier tipo de error, incluso de forma maliciosa o inconsistente para distintos observadores; es la categoría más difícil de tolerar.
 
-![Clasificación de fallos](Clase17_imagenes/pag-08.png)
+![Clasificación de fallos](imagenes/Clase17_imagenes/pag-08.png)
 
 También se distingue entre **condiciones ambientales** (hardware, red, energía, condiciones físicas) y **condiciones operacionales** (errores de software, errores humanos, configuración) como origen de los fallos.
 
@@ -67,30 +67,30 @@ La redundancia es la estrategia central de tolerancia a fallos: duplicar compone
 - **Activa**: todos los nodos replicados procesan las mismas solicitudes en paralelo y de forma determinística, manteniéndose sincronizados todo el tiempo.
 - **Semi-activa (leader-follower)**: un nodo líder coordina y los demás (*followers*) ejecutan las mismas operaciones pero bajo la coordinación del líder, combinando características de ambos esquemas.
 
-![Replicación pasiva](Clase17_imagenes/pag-14.png)
+![Replicación pasiva](imagenes/Clase17_imagenes/pag-14.png)
 
-![Replicación activa](Clase17_imagenes/pag-15.png)
+![Replicación activa](imagenes/Clase17_imagenes/pag-15.png)
 
-![Replicación semi-activa (leader-follower)](Clase17_imagenes/pag-16.png)
+![Replicación semi-activa (leader-follower)](imagenes/Clase17_imagenes/pag-16.png)
 
 ### Disponibilidad (Availability)
 
 La disponibilidad suele expresarse en términos de "9's" (por ejemplo, 99.9%, 99.99%, etc.), donde cada nueve adicional reduce drásticamente el tiempo de inactividad tolerado por año. Se ilustra el uso de **clusters de servidores redundantes** distribuidos para sostener altos niveles de disponibilidad.
 
-![Clusters para alta disponibilidad](Clase17_imagenes/pag-19.png)
+![Clusters para alta disponibilidad](imagenes/Clase17_imagenes/pag-19.png)
 
-![Distribución de tiempos de fallo](Clase17_imagenes/pag-20.png)
+![Distribución de tiempos de fallo](imagenes/Clase17_imagenes/pag-20.png)
 
 ### Maintainability: Infraestructura Mutable vs. Inmutable
 
 - **Infraestructura mutable**: los servidores se actualizan/parchean "in-place"; con el tiempo acumulan configuraciones manuales difíciles de reproducir (*configuration drift*).
 - **Infraestructura inmutable**: ante un cambio, en lugar de modificar el servidor existente se crea una nueva instancia desde cero (imagen) y se reemplaza la anterior, garantizando reproducibilidad y facilitando el rollback.
 
-![Infraestructura mutable vs. inmutable](Clase17_imagenes/pag-21.png)
+![Infraestructura mutable vs. inmutable](imagenes/Clase17_imagenes/pag-21.png)
 
 Este enfoque se apoya en pipelines de **CI/CD** (integración y despliegue continuo), que automatizan build, testing y despliegue de nuevas versiones inmutables del sistema.
 
-![Pipeline CI/CD](Clase17_imagenes/pag-22.png)
+![Pipeline CI/CD](imagenes/Clase17_imagenes/pag-22.png)
 
 ### Safety y Disaster Recovery
 
@@ -113,7 +113,7 @@ Un algoritmo de consenso debe garantizar (entre otras) las propiedades de:
 
 Se presenta un algoritmo de consenso por rondas en el que cada proceso propone un valor, se difunde a todos los demás procesos, y luego cada proceso decide en función de los valores recibidos (por ejemplo, tomando el máximo o aplicando una función de mayoría). Se ilustra una ejecución de ejemplo con tres procesos P1, P2 y P3 proponiendo valores y llegando a un valor consensuado común tras intercambiar mensajes.
 
-![Algoritmo de consenso - ejemplo de ejecución](Clase17_imagenes/pag-28.png)
+![Algoritmo de consenso - ejemplo de ejecución](imagenes/Clase17_imagenes/pag-28.png)
 
 ### Exclusión Mutua Distribuida
 
@@ -127,9 +127,9 @@ El problema de **exclusión mutua distribuida** consiste en garantizar que, de u
 
 Un proceso coordinador centraliza el otorgamiento del permiso de acceso a la sección crítica: los procesos le piden el "token" al servidor central, y lo liberan cuando terminan.
 
-![Algoritmo de Servidor Central](Clase17_imagenes/pag-31.png)
+![Algoritmo de Servidor Central](imagenes/Clase17_imagenes/pag-31.png)
 
-![Algoritmo de Servidor Central - flujo](Clase17_imagenes/pag-32.png)
+![Algoritmo de Servidor Central - flujo](imagenes/Clase17_imagenes/pag-32.png)
 
 - **Ventajas**: simple de implementar, garantiza fairness en el orden de llegada de solicitudes al servidor.
 - **Desventajas**: el servidor central es un **punto único de fallo (SPOF)** y un cuello de botella de escalabilidad.
@@ -138,9 +138,9 @@ Un proceso coordinador centraliza el otorgamiento del permiso de acceso a la sec
 
 Los procesos se organizan en un anillo lógico; un **token** circula de proceso en proceso en un único sentido. Solo el proceso que posee el token puede acceder a la sección crítica; al terminar, pasa el token al siguiente proceso del anillo.
 
-![Algoritmo Token Ring](Clase17_imagenes/pag-34.png)
+![Algoritmo Token Ring](imagenes/Clase17_imagenes/pag-34.png)
 
-![Algoritmo Token Ring - flujo](Clase17_imagenes/pag-35.png)
+![Algoritmo Token Ring - flujo](imagenes/Clase17_imagenes/pag-35.png)
 
 - **Ventajas**: no requiere coordinador central, garantiza ausencia de starvation (todo proceso eventualmente recibe el token).
 - **Desventajas**: introduce latencia (hay que esperar a que el token circule aunque nadie quiera la sección crítica), y la pérdida del token o la caída de un proceso del anillo requiere mecanismos adicionales de recuperación.
@@ -158,19 +158,19 @@ Algoritmo de exclusión mutua distribuida basado en **timestamps lógicos** y br
 
 - P1 solicita la sección crítica con timestamp T=10; P3 (en estado RELEASED, T=9) responde inmediatamente OK; P2 (estado WANTED, T=15) encola la solicitud de P1, ya que su propio timestamp T=15 es mayor (P1 tiene prioridad), y P1 pasa a estado HELD.
 
-![Ricart & Agrawala - paso intermedio](Clase17_imagenes/pag-38.png)
+![Ricart & Agrawala - paso intermedio](imagenes/Clase17_imagenes/pag-38.png)
 
-![Ricart & Agrawala - paso intermedio](Clase17_imagenes/pag-39.png)
+![Ricart & Agrawala - paso intermedio](imagenes/Clase17_imagenes/pag-39.png)
 
-![Ricart & Agrawala - paso intermedio](Clase17_imagenes/pag-40.png)
+![Ricart & Agrawala - paso intermedio](imagenes/Clase17_imagenes/pag-40.png)
 
 - Estado final del ejemplo: P1 queda en HELD (T=10) habiendo recibido OK de P3 y de P2; P3 está en RELEASED (T=9); P2 está en WANTED (T=15) y queda encolado `<T=15, Pid=2>` en la cola de P1 hasta que este libere la sección crítica.
 
-![Ricart & Agrawala - estado final del ejemplo](Clase17_imagenes/pag-41.png)
+![Ricart & Agrawala - estado final del ejemplo](imagenes/Clase17_imagenes/pag-41.png)
 
 **Ventajas y desventajas:**
 
-![Ventajas, desventajas y mesh de conexiones](Clase17_imagenes/pag-42.png)
+![Ventajas, desventajas y mesh de conexiones](imagenes/Clase17_imagenes/pag-42.png)
 
 - **Ventajas**: no hay necesidad de un coordinador central.
 - **Desventajas**: requiere una topología tipo *mesh* donde todos los procesos se conocen entre sí; la cantidad de mensajes necesarios para obtener la sección crítica es alta (2(N-1)); y es imposible distinguir entre un proceso caído y un proceso que simplemente está tardando en responder porque está en la sección crítica.
@@ -193,4 +193,4 @@ Algoritmo de exclusión mutua distribuida basado en **timestamps lógicos** y br
 1. **Phase 1 (Prepare)**: el coordinador envía un mensaje de `Prepare` a todos los nodos (Service 1 … Service N), quienes responden indicando si pueden o no comprometerse a realizar la operación.
 2. **Phase 2 (Commit/Abort)**: si todos los nodos respondieron favorablemente, el coordinador envía `Commit` a todos; si alguno falló o respondió negativamente, envía `Abort` a todos, garantizando que la transacción se aplique de forma atómica (todo o nada) en todos los nodos.
 
-![Two-phase Commit - Fases](Clase17_imagenes/pag-45.png)
+![Two-phase Commit - Fases](imagenes/Clase17_imagenes/pag-45.png)

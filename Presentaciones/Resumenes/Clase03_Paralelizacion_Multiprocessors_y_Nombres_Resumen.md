@@ -15,10 +15,10 @@
 > "El esfuerzo dedicado a lograr altas tasas de procesamiento paralelo se desperdicia a menos que vaya acompañado de logros en las tasas de procesamiento secuencial de magnitud muy similar..."
 
 - Corolario: todo trabajo de cómputo se divide en fracciones secuenciales y paralelas
-![alt text](image-10.png)
+![alt text](imagenes/image-10.png)
 
 - Corolario: utilizando P unidades de cómputo, el tiempo de ejecución total puede reducirse
-![alt text](image-12.png)
+![alt text](imagenes/image-12.png)
 
 
 - El **Speedup máximo** está acotado **por la fracción de tiempo que no puede ser paralelizable**, asumiendo que la fracción paralelizable se distribuye **uniformemente** entre los procesadores.
@@ -26,7 +26,7 @@
 **Speedup** : 
 Ratio de cuánto tiempo se gana al meter P procesadores:
 
-![alt text](image-13.png)
+![alt text](imagenes/image-13.png)
 
 ### Ley de Gustafson
 
@@ -52,12 +52,12 @@ Ratio de cuánto tiempo se gana al meter P procesadores:
 
 **Ejemplo práctico** (grafo de dependencias de tareas):
 
-![DAG de tareas con secciones serial/paralelo](Clase03_imagenes/pag-11.png)
+![DAG de tareas con secciones serial/paralelo](imagenes/Clase03_imagenes/pag-11.png)
 
 - **Work-Span**: T₁ = 18 (work), T_inf = 6 (span) → S_P = T₁/T_inf = **3**
 - **Amdahl**: f = 2/18 = 1/9 → S_inf = 1/f = **9**
 
-![Comparación de cotas de Speedup: Amdahl vs Work-Span](Clase03_imagenes/pag-12.png)
+![Comparación de cotas de Speedup: Amdahl vs Work-Span](imagenes/Clase03_imagenes/pag-12.png)
 
 El modelo de Amdahl sobreestima el Speedup posible; el modelo Work-Span da una estimación más realista acotada entre `T₁/(T₁/P + T_inf)` (cota inferior) y `min(P, T₁/T_inf)` (cota superior).
 
@@ -83,7 +83,7 @@ El modelo de Amdahl sobreestima el Speedup posible; el modelo Work-Span da una e
 
 Notación: **Task** (cuadrado azul), **Data** (redondeado verde), **Fork** (punto negro), **Join** (círculo amarillo), **Dependency** (flecha).
 
-![Patrones: Fork-Join, Pack, Split, Pipeline, Map, Reduction](Clase03_imagenes/pag-15.png)
+![Patrones: Fork-Join, Pack, Split, Pipeline, Map, Reduction](imagenes/Clase03_imagenes/pag-15.png)
 
 - **Fork-Join**: un proceso se divide (*fork*) en múltiples tareas paralelas que luego se sincronizan (*join*).
 - **Pack / Split**: reorganización de datos filtrando o separando elementos según una condición.
@@ -99,12 +99,12 @@ Notación: **Task** (cuadrado azul), **Data** (redondeado verde), **Fork** (punt
 
 Clasificación de sistemas de acuerdo a la cardinalidad de flujos de instrucciones (procesadores) y flujos de datos (memoria).
 
-![alt text](image-14.png)
+![alt text](imagenes/image-14.png)
 
 - **SISD** (*Single Instruction Single Data*): modelo estándar de un procesador sin paralelismo.
 - **SIMD**: *array processors*. Ejemplo: GPU.
 
-![alt text](image-15.png)
+![alt text](imagenes/image-15.png)
 
 - **MISD**: no son usuales (*redundant computation*, data-pipelines).
 - **MIMD**: se divide en dos modelos:
@@ -113,7 +113,7 @@ Clasificación de sistemas de acuerdo a la cardinalidad de flujos de instruccion
 
 ### MIMD | Multiprocessors (Memoria Compartida)
 
-![Symmetric vs Asymmetric Multiprocessing](Clase03_imagenes/pag-22.png)
+![Symmetric vs Asymmetric Multiprocessing](imagenes/Clase03_imagenes/pag-22.png)
 
 - **Symmetric Multiprocessing**: todos los procesadores acceden por igual al bus compartido con la memoria y otros dispositivos de I/O.
 - **Asymmetric Multiprocessing**: existe una jerarquía/bridge entre procesadores, no todos tienen el mismo nivel de acceso directo a la memoria principal.
@@ -125,7 +125,7 @@ Clasificación de sistemas de acuerdo a la cardinalidad de flujos de instruccion
 
 **NUMA (Non Uniform Memory Access):**
 
-![Diagrama NUMA con CPUs y memoria local por slot](Clase03_imagenes/pag-24.png)
+![Diagrama NUMA con CPUs y memoria local por slot](imagenes/Clase03_imagenes/pag-24.png)
 
 - Cada CPU controla un bloque de memoria local como su *home agent*.
 - Mayor ancho de banda si se respeta el acceso a memoria local.
@@ -163,14 +163,14 @@ Clasificación de sistemas de acuerdo a la cardinalidad de flujos de instruccion
 
 ### Ejemplo: DNS
 
-![Árbol jerárquico de zonas DNS](Clase03_imagenes/pag-29.png)
+![Árbol jerárquico de zonas DNS](imagenes/Clase03_imagenes/pag-29.png)
 
 - Ejemplo: `fi.uba.ar.` — comando `dig fi.uba.ar. @8.8.8.8 +trace`.
 - Jerarquía de **zonas**: desde el nivel raíz (Top Level `"."`) hacia dominios (`.com`, `.net`, `.edu`, `.org`, `.info`) y subdominios (ej. `.duke`, `.unc`, `.ncsu` dentro de `.edu`).
 
 ### Ejemplo: Service Discovery
 
-![Diagrama de Service Discovery: Client, Service Registry e Instancias](Clase03_imagenes/pag-30.png)
+![Diagrama de Service Discovery: Client, Service Registry e Instancias](imagenes/Clase03_imagenes/pag-30.png)
 
 - Las **Service Instances** se **registran** (*Register*) en el **Service Registry**.
 - El **Client** consulta (*Discover*) al Service Registry para obtener una instancia disponible del servicio que necesita.

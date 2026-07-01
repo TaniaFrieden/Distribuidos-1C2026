@@ -4,7 +4,7 @@
 
 ### Flujo de Datos
 
-![Flujo de datos: Services consultan Cache y bases (Master Data, Transactional Data, Search Indexes), encolan tareas asíncronas en un MOM y se integran con servicios externos](Clase13_imagenes/pag-03.png)
+![Flujo de datos: Services consultan Cache y bases (Master Data, Transactional Data, Search Indexes), encolan tareas asíncronas en un MOM y se integran con servicios externos](imagenes/Clase13_imagenes/pag-03.png)
 
 Un sistema de gran escala típico combina: **Cache** (lookups/writes rápidos), un **MOM** para encolar operaciones asíncronas, y tres tipos de almacenamiento de datos —**Master Data**, **Transactional Data** y **Search Indexes**— alimentados por servicios que detectan cambios y populan índices, además de un punto de **integración** con servicios externos.
 
@@ -45,7 +45,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Almacenamiento | Cubos de Información
 
-![Cubo de información cruzando date_id x product_id x quantity con totales](Clase13_imagenes/pag-08.png)
+![Cubo de información cruzando date_id x product_id x quantity con totales](imagenes/Clase13_imagenes/pag-08.png)
 
 - Normalmente: mantienen **vistas materializadas** con pre-cálculos estadísticos.
 - Se crean grillas agrupadas por diferentes dimensiones.
@@ -57,7 +57,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Leader based
 
-![Leader Replica recibe Read/Writes y replica vía Mirroring a Follower Replicas, que solo aceptan lecturas](Clase13_imagenes/pag-10.png)
+![Leader Replica recibe Read/Writes y replica vía Mirroring a Follower Replicas, que solo aceptan lecturas](imagenes/Clase13_imagenes/pag-10.png)
 
 - Una réplica se designa como **master** o **leader**.
 - Otras réplicas se designan **mirrors**, **slaves** o **followers**.
@@ -67,7 +67,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Multi-leader based
 
-![Dos Leader Replicas en distintos data-centers replicándose mutuamente con resolución de conflictos, cada uno con sus Follower Replicas](Clase13_imagenes/pag-11.png)
+![Dos Leader Replicas en distintos data-centers replicándose mutuamente con resolución de conflictos, cada uno con sus Follower Replicas](imagenes/Clase13_imagenes/pag-11.png)
 
 - Modelo normal en escenarios de **múltiples data-centers**.
 - Frente a caídas de un data-center, se puede promover al otro como líder global.
@@ -76,7 +76,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Leaderless based
 
-![Cuatro réplicas sincronizándose mutuamente todas contra todas, todas aceptando Read/Writes](Clase13_imagenes/pag-12.png)
+![Cuatro réplicas sincronizándose mutuamente todas contra todas, todas aceptando Read/Writes](imagenes/Clase13_imagenes/pag-12.png)
 
 - Sistema de replicación **totalmente distribuido**.
 - Las réplicas deben **sincronizarse mutuamente**.
@@ -86,7 +86,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Particionamiento | Motivaciones
 
-![Replicación simple a un Datastore vs Particionamiento en Partition 1-4](Clase13_imagenes/pag-13.png)
+![Replicación simple a un Datastore vs Particionamiento en Partition 1-4](imagenes/Clase13_imagenes/pag-13.png)
 
 Distintos puntos de contacto con la estrategia de Replicación:
 - **Performance**: velocidades de escritura, velocidades de lectura.
@@ -118,7 +118,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### Particionamiento | Enrutamiento
 
-![Tres estrategias de enrutamiento: contactar cualquier partición y redirigir, usar un Router central, o que el cliente sepa directamente a qué partición ir](Clase13_imagenes/pag-17.png)
+![Tres estrategias de enrutamiento: contactar cualquier partición y redirigir, usar un Router central, o que el cliente sepa directamente a qué partición ir](imagenes/Clase13_imagenes/pag-17.png)
 
 - **Cualquier partición + redirección**: el cliente contacta cualquier partición; si no tiene los datos, esta lo redirige a la partición correcta (`Route to Part 3`).
 - **Router centralizado**: el cliente consulta siempre a un componente **Router**, que conoce la ubicación de cada dato y lo redirige a la partición correcta.
@@ -136,7 +136,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Enfoque Naive
 
-![Server centraliza las Memory Pages; Clients piden locks que pueden ser aceptados o denegados](Clase13_imagenes/pag-20.png)
+![Server centraliza las Memory Pages; Clients piden locks que pueden ser aceptados o denegados](imagenes/Clase13_imagenes/pag-20.png)
 
 - La información es almacenada en memoria por el servidor.
 - Los clientes acceden mediante *requests* a escribir o leer las páginas.
@@ -145,7 +145,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Migración de Memory Pages
 
-![Server delega Page A a un Client mediante Page migration; otros clientes que piden la misma página quedan bloqueados (Page request)](Clase13_imagenes/pag-21.png)
+![Server delega Page A a un Client mediante Page migration; otros clientes que piden la misma página quedan bloqueados (Page request)](imagenes/Clase13_imagenes/pag-21.png)
 
 - La información es almacenada en memoria por el servidor y **delegada en los clientes**.
 - Los clientes pueden optimizar la localidad de acceso pidiendo una *memory page* prestada.
@@ -154,7 +154,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Replicación de Memory Pages (solo lectura)
 
-![Server replica páginas en modo read-only a múltiples Clients, invalidando réplicas cuando hay un write](Clase13_imagenes/pag-22.png)
+![Server replica páginas en modo read-only a múltiples Clients, invalidando réplicas cuando hay un write](imagenes/Clase13_imagenes/pag-22.png)
 
 - Favorece escenarios con **muchas lecturas y pocas escrituras**.
 - Las **escrituras son coordinadas por el servidor**.
@@ -163,7 +163,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Replicación de Memory Pages (lectura-escritura)
 
-![Write Sequencer mantiene las páginas hasta que los clientes las requieren, propagando Page updates entre réplicas](Clase13_imagenes/pag-23.png)
+![Write Sequencer mantiene las páginas hasta que los clientes las requieren, propagando Page updates entre réplicas](imagenes/Clase13_imagenes/pag-23.png)
 
 - El servidor mantiene las páginas de memoria hasta que los clientes las requieren.
 - Los **clientes toman control total de las réplicas**.
@@ -200,7 +200,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 - Las aplicaciones utilizan el VFS para acceder a los archivos, lo que requiere una invocación remota.
 - Los servidores proveen operaciones idénticas a las requeridas por **Posix**, soportando ser montado como una unidad virtual.
 
-![Arquitectura NFS: App1/App2 acceden vía Virtual FS y NFS Client (Client), que se comunica vía NFS Protocol/RPC con el NFS Server (Server)](Clase13_imagenes/pag-28.png)
+![Arquitectura NFS: App1/App2 acceden vía Virtual FS y NFS Client (Client), que se comunica vía NFS Protocol/RPC con el NFS Server (Server)](imagenes/Clase13_imagenes/pag-28.png)
 
 **Instalación Servidor-Cliente:**
 ```bash
@@ -234,7 +234,7 @@ mount -t nfs -o proto=tcp,port=2049 <nfs-server-IP>:/ /mnt
 
 **Arquitectura:**
 
-![Arquitectura maestro-esclavo de HDFS: Client consulta al Namenode (metadata) y luego a los Datanodes (File Blocks)](Clase13_imagenes/pag-32.png)
+![Arquitectura maestro-esclavo de HDFS: Client consulta al Namenode (metadata) y luego a los Datanodes (File Blocks)](imagenes/Clase13_imagenes/pag-32.png)
 
 - Arquitectura **maestro-esclavo**.
 - **Namenode**: contiene la información de *metadata* de archivo. Coordina a los Datanodes.
@@ -243,7 +243,7 @@ mount -t nfs -o proto=tcp,port=2049 <nfs-server-IP>:/ /mnt
 
 **Almacenamiento de Datos:**
 
-![Un archivo se particiona en bloques de 128MB que se replican entre distintos Datanodes, con metadata en el Namenode y un Edit Log](Clase13_imagenes/pag-33.png)
+![Un archivo se particiona en bloques de 128MB que se replican entre distintos Datanodes, con metadata en el Namenode y un Edit Log](imagenes/Clase13_imagenes/pag-33.png)
 
 - Los archivos se particionan en **bloques de 128MB**.
 - Los bloques son **replicados** en distintos Datanodes.
@@ -253,7 +253,7 @@ mount -t nfs -o proto=tcp,port=2049 <nfs-server-IP>:/ /mnt
 
 **Acceso a Datos:**
 
-![Client A en el mismo Rack que sus Datanodes; Namenode y Client B en otro Rack del mismo Data Center](Clase13_imagenes/pag-34.png)
+![Client A en el mismo Rack que sus Datanodes; Namenode y Client B en otro Rack del mismo Data Center](imagenes/Clase13_imagenes/pag-34.png)
 
 - El Namenode favorece el principio de **localidad de datos** para el cliente.
 - El cliente recibe el listado de Datanodes para cada bloque y sus réplicas.

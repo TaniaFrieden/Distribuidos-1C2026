@@ -4,15 +4,15 @@
 
 - **La Ley de Moore ya no garantiza performance**: el número de transistores sigue creciendo, pero la frecuencia y el rendimiento por hilo se estancaron desde mediados de los 2000. Por eso se recurre a más núcleos (paralelismo) en vez de procesadores más rápidos.
 
-  ![Tendencias de microprocesadores - 42 años](Clase01_imagenes/pag-03.png)
+  ![Tendencias de microprocesadores - 42 años](imagenes/Clase01_imagenes/pag-03.png)
 
 - **Internet como medio de integración indiscutido**: crecimiento exponencial de usuarios de Internet por región y de dispositivos conectados (ej. censo de la botnet Carna, 2012, ~460M de IPs).
 
-  ![Usuarios de Internet por región y censo Carna Botnet](Clase01_imagenes/pag-04.png)
+  ![Usuarios de Internet por región y censo Carna Botnet](imagenes/Clase01_imagenes/pag-04.png)
 
 - **Las PCs ya no conducen el movimiento**: el crecimiento de dispositivos conectados está dominado por smartphones, IoT, wearables, smart home, etc., no por las PCs tradicionales.
 
-  ![Forecast de dispositivos de Internet instalados](Clase01_imagenes/pag-05.png)
+  ![Forecast de dispositivos de Internet instalados](imagenes/Clase01_imagenes/pag-05.png)
 
 ### Respuesta a las nuevas necesidades
 
@@ -29,7 +29,7 @@ Los sistemas distribuidos cobran relevancia por el crecimiento de la integració
 
 ### Arquitecturas de ejemplo
 
-![Arquitecturas Client-Server, P2P y Heterogéneas](Clase01_imagenes/pag-09.png)
+![Arquitecturas Client-Server, P2P y Heterogéneas](imagenes/Clase01_imagenes/pag-09.png)
 
 - **Client-Server**: un servidor central atiende a múltiples clientes.
 - **Peer-to-peer (p2p)**: todos los nodos (peers) tienen el mismo rol y se comunican entre sí.
@@ -58,7 +58,7 @@ Tres definiciones clásicas:
 
 ### Variantes de multiprogramación
 
-![Multi-threading, Multi-processing, Multi-computing](Clase01_imagenes/pag-14.png)
+![Multi-threading, Multi-processing, Multi-computing](imagenes/Clase01_imagenes/pag-14.png)
 
 - **Multi-threading**: múltiples hilos comparten una misma memoria.
 - **Multi-processing**: múltiples procesos, cada uno con su propia memoria, dentro de la misma máquina.
@@ -66,14 +66,14 @@ Tres definiciones clásicas:
 
 ### Modelos para el análisis
 
-![Modelo de estados y modelo de eventos](Clase01_imagenes/pag-15.png)
+![Modelo de estados y modelo de eventos](imagenes/Clase01_imagenes/pag-15.png)
 
 - **Modelo de Estados** (*interleaved model*): cada proceso transita entre estados mediante transiciones (ej. P1 pasa de A1 a A2 mediante t1).
 - **Modelo de Eventos** (*happened before*): se analiza la relación causal entre eventos de distintos procesos en el tiempo (ej. un evento e1 en P1 envía un mensaje que provoca el evento f2 en P2).
 
 ### Paralelismo vs Concurrencia
 
-![Paralelo vs Concurrente](Clase01_imagenes/pag-16.png)
+![Paralelo vs Concurrente](imagenes/Clase01_imagenes/pag-16.png)
 
 - **Paralelo**: cada proceso accede a su propio recurso de forma simultánea e independiente (Resource 1 para P1, Resource 2 para P2).
 - **Concurrente**: varios procesos compiten/comparten el acceso al **mismo** recurso a lo largo del tiempo (Resource shared).
@@ -84,7 +84,7 @@ Tres definiciones clásicas:
 
 ### Topologías de comunicación
 
-![Topologías: Bus, Star, Tree, Mesh, Sequential, Ring](Clase01_imagenes/pag-18.png)
+![Topologías: Bus, Star, Tree, Mesh, Sequential, Ring](imagenes/Clase01_imagenes/pag-18.png)
 
 - **Bus**: todos los nodos comparten un único canal lineal.
 - **Star**: un nodo central conecta a todos los demás.
@@ -143,7 +143,7 @@ Tres definiciones clásicas:
 
 ### VMs vs Containers
 
-![Comparación entre máquinas virtuales (Hosted) y Containers](Clase01_imagenes/pag-27.png)
+![Comparación entre máquinas virtuales (Hosted) y Containers](imagenes/Clase01_imagenes/pag-27.png)
 
 - En el modelo **Hosted**, cada aplicación necesita su propio Guest OS completo (más pesado).
 - En el modelo **Containers (10s)**, las apps comparten el mismo Host OS (Linux) a través de un Container Engine, siendo mucho más livianos que las VMs.

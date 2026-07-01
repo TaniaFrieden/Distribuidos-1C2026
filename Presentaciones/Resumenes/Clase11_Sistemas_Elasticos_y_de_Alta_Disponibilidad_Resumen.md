@@ -16,7 +16,7 @@ El objetivo de la escalabilidad es el **crecimiento**:
 
 ### Patrón de Carga de Aplicaciones Web
 
-![Cuatro patrones de carga: Predictable Burst, Unpredictable Burst, Periodic Processing, Start Small Grow Fast](Clase11_imagenes/pag-05.png)
+![Cuatro patrones de carga: Predictable Burst, Unpredictable Burst, Periodic Processing, Start Small Grow Fast](imagenes/Clase11_imagenes/pag-05.png)
 
 - **Predictable Burst**: pico de cómputo previsible que sube y baja.
 - **Unpredictable Burst**: picos irregulares que van en aumento.
@@ -25,7 +25,7 @@ El objetivo de la escalabilidad es el **crecimiento**:
 
 ### Limitantes
 
-![Diagrama de limitantes: Arquitectura y Algoritmos, Datos (4 V's), Red, Restricciones de Negocio y Legales, Presupuesto](Clase11_imagenes/pag-06.png)
+![Diagrama de limitantes: Arquitectura y Algoritmos, Datos (4 V's), Red, Restricciones de Negocio y Legales, Presupuesto](imagenes/Clase11_imagenes/pag-06.png)
 
 Los límites de la escalabilidad están dados por: **Arquitectura y Algoritmos**, **Datos (4 V's)**, **Red** (latencia y ancho de banda), **Restricciones de Negocio y Legales**, todo condicionado por el **Presupuesto**.
 
@@ -59,7 +59,7 @@ Los límites de la escalabilidad están dados por: **Arquitectura y Algoritmos**
 - **Autoscaler** (Amazon Autoscaling): el *Autoscaling group* permite definir `min`, `desired` y `max` instances; existen diferentes *policies* para distintos objetivos (dynamic vs manual scaling).
 - **Monitoring Automático** (Amazon CloudWatch): métricas globales automatizadas; admite agregar métricas propias.
 
-![Arquitectura AWS con ELB, Auto Scaling, Availability Zones y CloudWatch](Clase11_imagenes/pag-12.png)
+![Arquitectura AWS con ELB, Auto Scaling, Availability Zones y CloudWatch](imagenes/Clase11_imagenes/pag-12.png)
 
 ### Ejemplo N°2 — Kubernetes
 
@@ -67,12 +67,12 @@ Los límites de la escalabilidad están dados por: **Arquitectura y Algoritmos**
 - **Autoscaler** (Horizontal Pod Autoscale): se crea un recurso HPA asociado a un *deployment* en función de alguna métrica, ponderando las métricas de cada instancia/container: `desiredReplicas = ceil[currReplicas * (currMetricValue / desiredMetricValue)]`.
 - **Monitoring Automático** (Kubernetes Metrics Server): colecta métricas de cada pod en el cluster y las expone en el API server, diseñado específicamente para autoscaling.
 
-![Liveness probes vs Readiness probes verificando el estado de los pods](Clase11_imagenes/pag-14.png)
+![Liveness probes vs Readiness probes verificando el estado de los pods](imagenes/Clase11_imagenes/pag-14.png)
 
 - **Liveness**: verifica si el contenedor sigue vivo (si falla, se reinicia).
 - **Readiness**: verifica si el contenedor está listo para recibir tráfico (si falla, se lo saca temporalmente del balanceo sin reiniciarlo).
 
-![Arquitectura de un Kubernetes cluster: Control Plane (API server, Controller manager, etcd, scheduler) y Nodes (kubelet, kube-proxy)](Clase11_imagenes/pag-15.png)
+![Arquitectura de un Kubernetes cluster: Control Plane (API server, Controller manager, etcd, scheduler) y Nodes (kubelet, kube-proxy)](imagenes/Clase11_imagenes/pag-15.png)
 
 - **Control Plane**: API server, Cloud controller manager, Controller manager, `etcd` (persistence store), Scheduler.
 - **Node**: `kubelet` y `kube-proxy` en cada nodo del cluster, gestionados por el Control Plane.
@@ -99,7 +99,7 @@ Como `P(system available) < 1` siempre, lo importante es definir cuán cerca de 
 
 **Escenario: Sistema distribuido con un componente por nodo** (sin redundancia):
 
-![Web Server, DB Server y Report Server cada uno con P(available)=0,9](Clase11_imagenes/pag-18.png)
+![Web Server, DB Server y Report Server cada uno con P(available)=0,9](imagenes/Clase11_imagenes/pag-18.png)
 
 ```
 P(available) = P(webAvailable) . P(dbAvailable) . P(reportAvailable)
@@ -110,7 +110,7 @@ Cuando los componentes están **encadenados** (dependen unos de otros sin redund
 
 **Escenario: Redundancia con todos los componentes en cada nodo:**
 
-![Tres servidores redundantes, cada uno con Web+DB+Report Server, P(available)=0,9 cada uno](Clase11_imagenes/pag-19.png)
+![Tres servidores redundantes, cada uno con Web+DB+Report Server, P(available)=0,9 cada uno](imagenes/Clase11_imagenes/pag-19.png)
 
 ```
 P(available) = 1 - P(failure) = 1 - P(failure1 & failure2 & failure3)
@@ -121,7 +121,7 @@ Cuando los componentes están **replicados en paralelo**, la disponibilidad tota
 
 **Escenario: Clusters para cada componente:**
 
-![Clusters redundantes para Web Server, DB Server y Report Server, cada cluster con P=0,999](Clase11_imagenes/pag-20.png)
+![Clusters redundantes para Web Server, DB Server y Report Server, cada cluster con P=0,999](imagenes/Clase11_imagenes/pag-20.png)
 
 ```
 P(available) = P(cluster web) . P(cluster DB) . P(cluster report)
@@ -138,14 +138,14 @@ Combinando clusters redundantes (alta disponibilidad interna) encadenados entre 
 
 ### CAP Theorem
 
-![Load Balancer con dos réplicas comunicadas por two-way replication, mostrando un fail point](Clase11_imagenes/pag-22.png)
+![Load Balancer con dos réplicas comunicadas por two-way replication, mostrando un fail point](imagenes/Clase11_imagenes/pag-22.png)
 
 Eric Brewer ('98): en sistemas distribuidos con almacenamiento es posible garantizar solo **2 de los siguientes 3 atributos** frente a un particionamiento de red:
 - **Consistency**: también conocida como repetibilidad de respuesta de todos los nodos frente a un mismo pedido.
 - **Availability**: capacidad del sistema de responder a todo pedido.
 - **Partition Tolerance**: capacidad de lidiar con la formación de grupos aislados de nodos.
 
-![Diagrama de Venn CAP con ejemplos de bases de datos: CA (SQL Server, MySQL, MariaDB), CP (HBase, MongoDB, Redis), AP (CouchDB, Cassandra, Riak)](Clase11_imagenes/pag-23.png)
+![Diagrama de Venn CAP con ejemplos de bases de datos: CA (SQL Server, MySQL, MariaDB), CP (HBase, MongoDB, Redis), AP (CouchDB, Cassandra, Riak)](imagenes/Clase11_imagenes/pag-23.png)
 
 - Se puede sacrificar **Consistency** o **Availability**, pero no necesariamente es todo o nada.
 - Sacrificar **Partition Tolerance** significa no proveer un sistema distribuido (ya que en un sistema realmente distribuido las particiones de red son inevitables).
@@ -158,20 +158,20 @@ Eric Brewer ('98): en sistemas distribuidos con almacenamiento es posible garant
 
 **Monolíticas:**
 
-![Reverse Proxy -> Web Server -> DB Server, con Static Files](Clase11_imagenes/pag-25.png)
+![Reverse Proxy -> Web Server -> DB Server, con Static Files](imagenes/Clase11_imagenes/pag-25.png)
 
 Un único Web Server atiende los requests (a través de un Reverse Proxy que también sirve Static Files) y consulta a un único DB Server.
 
 **Monolíticas (Escalables):**
 
-![Vista de Web Requests con múltiples WebServers detrás de un Reverse Proxy; Vista de Data Queries con un DB Server principal y réplicas de lectura](Clase11_imagenes/pag-26.png)
+![Vista de Web Requests con múltiples WebServers detrás de un Reverse Proxy; Vista de Data Queries con un DB Server principal y réplicas de lectura](imagenes/Clase11_imagenes/pag-26.png)
 
 - **Vista de Web Requests**: el Reverse Proxy reparte requests entre múltiples WebServers. Ventaja: routeo y escalabilidad. Desventaja: *single point of failure* (el propio Reverse Proxy).
 - **Vista de Data Queries**: el WebServer consulta a un DB Server principal, que tiene réplicas de solo lectura. Ventaja: throughput en lectura. Desventaja: throughput en escritura (sigue limitado por el nodo principal).
 
 **Service Oriented Architecture (SOA):**
 
-![Web App y Portlet conectados a través de un Service Registry y un Enterprise Service Bus hacia Orchestration Processes y Services, que acceden a Data Services](Clase11_imagenes/pag-27.png)
+![Web App y Portlet conectados a través de un Service Registry y un Enterprise Service Bus hacia Orchestration Processes y Services, que acceden a Data Services](imagenes/Clase11_imagenes/pag-27.png)
 
 Componentes principales:
 - **Service Registry**: registro de servicios disponibles.
@@ -200,13 +200,13 @@ SOA no es únicamente la definición de arquitecturas, sino un **paradigma orien
 
 ### Microservicios
 
-![Front App y API Gateway conectados a múltiples Web Servers, cada uno con su propia DB, comunicados entre sí](Clase11_imagenes/pag-30.png)
+![Front App y API Gateway conectados a múltiples Web Servers, cada uno con su propia DB, comunicados entre sí](imagenes/Clase11_imagenes/pag-30.png)
 
 Cada Web Server (microservicio) tiene su propia base de datos dedicada (DB 1, DB 2, etc.) y se comunican entre sí según sea necesario; los clientes acceden a través de un **API Gateway** o **Front App**.
 
 ### Transición entre Arquitecturas
 
-![Comparación de granularidad: Monolíticas (Application única), SOA (Process + Service), Microservicios (muchos SVC pequeños)](Clase11_imagenes/pag-31.png)
+![Comparación de granularidad: Monolíticas (Application única), SOA (Process + Service), Microservicios (muchos SVC pequeños)](imagenes/Clase11_imagenes/pag-31.png)
 
 | Monolíticas | SOA | Microservicios |
 |---|---|---|
@@ -216,7 +216,7 @@ A medida que aumenta la **granularidad** (de monolítico a microservicios), se g
 
 ### Serverless
 
-![HTTP Router y Events Router distribuyendo invocaciones entre múltiples Functions, que acceden a Stores y Servicios Externos](Clase11_imagenes/pag-32.png)
+![HTTP Router y Events Router distribuyendo invocaciones entre múltiples Functions, que acceden a Stores y Servicios Externos](imagenes/Clase11_imagenes/pag-32.png)
 
 - El código se organiza en **funciones** (Function 1, Function 2, ...) invocadas a través de un **HTTP Router** o un **Events Router**.
 - Las funciones acceden a distintos *Stores* (bases de datos/almacenamiento) y a **External Services**.

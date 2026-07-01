@@ -20,7 +20,7 @@
 
 ### Topología
 
-![Topologías de Anillos, Punto a Punto y Grupos Jerárquicos](Clase05_imagenes/m5-05.png)
+![Topologías de Anillos, Punto a Punto y Grupos Jerárquicos](imagenes/Clase05_imagenes/m5-05.png)
 
 - **Anillos**: cada nodo conectado a sus dos vecinos formando un ciclo.
 - **Punto a Punto**: todos los nodos conectados entre sí (malla completa).
@@ -28,7 +28,7 @@
 
 **Difusión Descentralizada vs Centralizada** sobre una topología jerárquica:
 
-![Difusión descentralizada vs centralizada en un árbol jerárquico](Clase05_imagenes/m6-06.png)
+![Difusión descentralizada vs centralizada en un árbol jerárquico](imagenes/Clase05_imagenes/m6-06.png)
 
 - **Descentralizada**: cada nodo retransmite el mensaje únicamente a sus hijos directos, propagándose nivel por nivel.
 - **Centralizada**: el nodo raíz envía el mensaje directamente a todos los nodos del árbol.
@@ -74,11 +74,11 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Vista Física
 
-![Middleware centralizado: clientes y nodos conectados a un Middleware Host único](Clase05_imagenes/m13-13.png)
+![Middleware centralizado: clientes y nodos conectados a un Middleware Host único](imagenes/Clase05_imagenes/m13-13.png)
 
 - **Centralizado**: existe un **Middleware Host** único (con módulos de Discovery, Orchestration, Security, Persistence) al que se conectan tanto clientes como nodos.
 
-![Middleware distribuido: clientes conectados a varios servidores que se comunican entre sí](Clase05_imagenes/m14-14.png)
+![Middleware distribuido: clientes conectados a varios servidores que se comunican entre sí](imagenes/Clase05_imagenes/m14-14.png)
 
 - **Distribuido**: existen múltiples **Servers**, cada uno con su propio Middleware Agent, comunicados entre sí y accesibles por distintos clientes.
 
@@ -89,11 +89,11 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 - **Object Oriented**: mensajes hacia objetos distribuidos; los objetos viven dentro del middleware; esquema de '*marshalling*' para transmitir la información.
 
-![alt text](image-21.png)
+![alt text](imagenes/image-21.png)
 
 - **Procedure Oriented**: el middleware trabaja como un servidor de funciones que se pueden invocar; los servicios se pueden explorar y ejecutar, pero no presentan estado para futuras invocaciones.
 
-![alt text](image-22.png)
+![alt text](imagenes/image-22.png)
 
 - **Message Oriented**: funciona como un sistema de mensajería entre las aplicaciones que utilizan el middleware; pueden enviarse mensajes bajo cierto 'tópico' para que los interesados lo reciban (modo *Information Bus*), o con un destinatario definido (modo *Queue*).
 
@@ -111,14 +111,14 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Centralizado vs Distribuido
 
-![alt text](image-23.png)
+![alt text](imagenes/image-23.png)
 
 - **Centralizado**: todas las aplicaciones se comunican a través de un **Message Broker** único.
 - **Distribuido**: las aplicaciones se comunican directamente entre sí a través de la red, sin un punto central.
 
 ### Bus de Información vs Colas de Mensajes
 
-![Message Bus (todos comparten un canal con tópicos) vs Colas dedicadas (q1, q2, q3)](Clase05_imagenes/m23-23.png)
+![Message Bus (todos comparten un canal con tópicos) vs Colas dedicadas (q1, q2, q3)](imagenes/Clase05_imagenes/m23-23.png)
 
 - **Bus**: todos los participantes (Contabilidad, Ventas, Control Stock) comparten un **Message Bus** único, suscribiéndose (S) o publicando (V) sobre ciertos tópicos.
 - **Colas**: cada participante tiene su propia cola dedicada (q1, q2, q3) dentro del sistema de mensajería.
@@ -134,7 +134,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Modelo Asincrónico del MOM
 
-![alt text](image-24.png)
+![alt text](imagenes/image-24.png)
 
 **Pros:**
 - Se modela naturalmente con colas.
@@ -152,7 +152,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Colas de Mensajes
 
-![alt text](image-25.png)
+![alt text](imagenes/image-25.png)
 
 - Pueden existir varias colas definidas dentro del MOM.
 - Tienen nombre y longitud definidas.
@@ -161,7 +161,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Brokers
 
-![alt text](image-26.png)
+![alt text](imagenes/image-26.png)
 
 - Proveen transparencia de localización tanto al Emisor como al Receptor.
 - Soportan lógica en el middleware para **filtrar y modificar** mensajes (*Filtering*, *Routing*).
@@ -173,7 +173,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Conceptos
 
-![alt text](image-27.png)
+![alt text](imagenes/image-27.png)
 
 - **Queues**:
   - Nombradas vs TaskQueues vs Anónimas.
@@ -187,7 +187,7 @@ El flujo general es: *Producers* → *Exchanges* → *Queues* → *Consumers*, t
 
 ### Patrón: Publisher-Subscriber (Exchange Fanout)
 
-![alt text](image-28.png)
+![alt text](imagenes/image-28.png)
 
 - El "Productor" (en realidad un **Publisher**) envía mensajes a un exchange de tipo **fanout**.
 - Los "Consumidores" (en realidad **Subscribers**) crean colas anónimas para recibir mensajes del productor; estas colas son *bindeadas* al exchange del productor para comenzar a recibir mensajes.
@@ -195,7 +195,7 @@ El flujo general es: *Producers* → *Exchanges* → *Queues* → *Consumers*, t
 
 ### Patrón: Routing (Exchange Direct)
 
-![alt text](image-29.png)
+![alt text](imagenes/image-29.png)
 
 - El **Productor** envía mensajes a un exchange de tipo **direct**, adosando al mensaje un identificador de routeo (`routing_key`).
 - El **Consumidor** realiza *binding* al exchange direct con los `routing_keys` que desea recibir.
@@ -203,7 +203,7 @@ El flujo general es: *Producers* → *Exchanges* → *Queues* → *Consumers*, t
 
 ### Patrón: Topic (Exchange Topic)
 
-![alt text](image-30.png)
+![alt text](imagenes/image-30.png)
 
 - El **Productor** envía mensajes a un exchange de tipo **topic**, adosando un `routing_key`.
 - El **Consumidor** realiza *binding* al exchange topic con los patrones que desea recibir.

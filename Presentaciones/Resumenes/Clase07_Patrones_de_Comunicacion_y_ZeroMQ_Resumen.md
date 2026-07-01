@@ -13,7 +13,7 @@
 
 ### Operación Sincrónica
 
-![Cliente envía Request, espera, y recibe Reply del Servidor](Clase07_imagenes/pat4-04.png)
+![Cliente envía Request, espera, y recibe Reply del Servidor](imagenes/Clase07_imagenes/pat4-04.png)
 
 El cliente envía el Request y queda en espera (*wait*) hasta recibir el Reply, mientras el servidor recibe el request, procesa la operación y envía la respuesta.
 
@@ -23,13 +23,13 @@ Se necesitan **2 Request-Reply sincrónicos**:
 
 **1° Parte — Enviar la acción:**
 
-![Cliente envía la acción, el servidor la encola y responde con un ACK](Clase07_imagenes/pat5-05.png)
+![Cliente envía la acción, el servidor la encola y responde con un ACK](imagenes/Clase07_imagenes/pat5-05.png)
 
 El cliente envía la acción a realizar; el servidor la encola y responde inmediatamente con un ACK (sin esperar a que la acción termine de procesarse).
 
 **2° Parte — Consultar el estado:**
 
-![Cliente pregunta el estado, el servidor lo obtiene y responde](Clase07_imagenes/pat6-06.png)
+![Cliente pregunta el estado, el servidor lo obtiene y responde](imagenes/Clase07_imagenes/pat6-06.png)
 
 El cliente pregunta el estado de la operación en otro momento; el servidor obtiene el estado actual y lo envía como respuesta.
 
@@ -70,7 +70,7 @@ Modelo basado en comunicación **por eventos** entre productores y consumidores.
 
 ### Arquitectura de Publisher-Subscriber
 
-![alt text](image-31.png)
+![alt text](imagenes/image-31.png)
 
 Dos posibles arquitecturas:
 - **Basada en tópicos**: publicación y suscripción indicando el tipo de evento, tópico o tag.
@@ -78,7 +78,7 @@ Dos posibles arquitecturas:
 
 ### Implementación con MOMs
 
-![alt text](image-32.png)
+![alt text](imagenes/image-32.png)
 
 - **Bus** (basado en *topics*): todos los participantes comparten un Message Bus único, publicando (V) o suscribiéndose (S) a ciertos tópicos.
 - **Colas** (basado en canales): cada participante tiene su propia cola dedicada (q1, q2, q3) dentro del sistema de mensajería.
@@ -95,7 +95,7 @@ Dos posibles arquitecturas:
 
 ### Modelo de Procesamiento
 
-![alt text](image-33.png)
+![alt text](imagenes/image-33.png)
 
 Admite dos modelos de procesamiento:
 - **Worker por Filter**: se asigna una unidad de procesamiento a cada etapa del pipeline. Los items son recibidos por el worker, procesados y enviados a la próxima etapa.
@@ -103,7 +103,7 @@ Admite dos modelos de procesamiento:
 
 ### Etapas secuenciales y paralelas
 
-![alt text](image-34.png)
+![alt text](imagenes/image-34.png)
 
 Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 - **Paralela**: cada item a procesar es independiente de los anteriores y posteriores, por lo que admite paralelismo.
@@ -123,7 +123,7 @@ Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 
 **Ventajas:**
 
-![alt text](image-35.png)
+![alt text](imagenes/image-35.png)
 
 - Representación natural para *dataflows*.
 - La carga de procesamiento se puede paralelizar (ej. procesar A, B, C, E en un proceso P0 mientras D se procesa en paralelo en P1).
@@ -131,7 +131,7 @@ Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 
 **Dependencias y non-DAGs:**
 
-![alt text](image-36.png)
+![alt text](imagenes/image-36.png)
 
 - También se pueden utilizar DAGs para modelar dependencias entre procesos.
 - Las dependencias implican posibilidad de bloqueo frente al pedido de un recurso de un proceso a otro.
@@ -140,7 +140,7 @@ Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 
 **Ejemplo: Tensorflow**
 
-![Grafo de operaciones de Tensorflow generado a partir de código Python](Clase07_imagenes/pat25-25.png)
+![Grafo de operaciones de Tensorflow generado a partir de código Python](imagenes/Clase07_imagenes/pat25-25.png)
 
 Tensorflow modela las operaciones matemáticas (`tf.negative`, `tf.abs`, multiplicación, etc.) como un DAG de nodos, donde cada nodo depende del resultado de sus nodos predecesores, ejecutándose recién al llamar a `sess.run(e)`.
 
@@ -150,7 +150,7 @@ Tensorflow modela las operaciones matemáticas (`tf.negative`, `tf.abs`, multipl
 
 ### Definición según sus autores
 
-![Diagrama humorístico: TCP socket + ingredientes mágicos = ZeroMQ Socket](Clase07_imagenes/zmq3-03.png)
+![Diagrama humorístico: TCP socket + ingredientes mágicos = ZeroMQ Socket](imagenes/Clase07_imagenes/zmq3-03.png)
 
 ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP convencional, agregándole funcionalidades de alto nivel para mensajería distribuida.
 
@@ -171,7 +171,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Request-Reply
 
-![alt text](image-37.png)
+![alt text](imagenes/image-37.png)
 
 - Modelo Cliente-Servidor convencional (aunque no del todo).
 - **No posee primitiva `accept`**: la primitiva `bind` funciona como `bind + accept`.
@@ -181,7 +181,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Producer-Consumer (Push-Pull)
 
-![alt text](image-38.png)
+![alt text](imagenes/image-38.png)
 
 - Comunicación de tareas de un productor a un consumidor.
 - Admite múltiples consumidores y/o múltiples productores.
@@ -190,7 +190,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Publisher-Subscriber
 
-![alt text](image-39.png)
+![alt text](imagenes/image-39.png)
 
 - Un socket **ZMQ PUB** publica mensajes con el *message pattern*: `id field1 field2 ...fieldN`.
 - N sockets **ZMQ SUB** se registran a los eventos que desean recibir, suscribiéndose al ID del evento.
@@ -200,7 +200,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Pipeline (Push-Pull)
 
-![alt text](image-40.png)
+![alt text](imagenes/image-40.png)
 
 - Patrón Productor-Consumidor encadenado (*chaining*): el *chaining* de productores-consumidores da como resultado un pipeline.
 - Los mensajes son consumidos de forma equitativa (**fairness**).
@@ -208,7 +208,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Router-Dealer (Broker)
 
-![alt text](image-41.png)
+![alt text](imagenes/image-41.png)
 
 - **ROUTER socket**: agrega al mensaje recibido un ID de destinatario.
 - **DEALER socket**: rutea los mensajes de forma justa (**fair**), propagando el ID de origen del mensaje.

@@ -14,7 +14,7 @@ Repaso de la clase anterior: **Multi-threading**, **Multi-processing** y **Multi
 
 ### Propiedades de Programas Concurrentes
 
-![Safety vs Liveness](Clase02_imagenes/pag-07.png)
+![Safety vs Liveness](imagenes/Clase02_imagenes/pag-07.png)
 
 - **Safety properties** (siempre verdaderas — invariantes): **exclusión mutua**, **ausencia de deadlocks**. "Nada malo va a pasar".
 - **Liveness properties** (eventualmente verdaderas): **ausencia de starvation**, **fairness**. "Algo bueno va a pasar eventualmente".
@@ -116,7 +116,7 @@ Mecanismo que detiene a cada proceso/thread hasta que todos llegan a un mismo pu
 
 ### Rendezvous
 
-![Diagrama de rendezvous](Clase02_imagenes/pag-18.png)
+![Diagrama de rendezvous](imagenes/Clase02_imagenes/pag-18.png)
 
 Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos procesos que se "encuentran" en un punto determinado, como el pase de posta en una carrera de relevos.
 
@@ -126,7 +126,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ## 3. IPCs (Inter-Process Communication)
 
-![alt text](image.png)
+![alt text](imagenes/image.png)
 
 - Permiten la comunicación entre dos o más procesos.
 - Provistos por el **Sistema Operativo**.
@@ -159,7 +159,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Shared Memory
 
-![alt text](image-1.png)
+![alt text](imagenes/image-1.png)
 
 - Mecanismo provisto por el SO (Linux) para compartir recursos.
 - Abstracción inexistente en threads: el heap entre dos threads de un mismo proceso ya es compartido naturalmente.
@@ -177,7 +177,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Pipes y Fifos
 
-![alt text](image-2.png)
+![alt text](imagenes/image-2.png)
 
 - Pasaje de información directa entre 2 procesos.
 - En Linux: API de un archivo para escritura/lectura.
@@ -186,7 +186,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Message Queues (System V)
 
-![alt text](image-3.png)
+![alt text](imagenes/image-3.png)
 
 - Los procesos escriben/reciben bloques de bytes.
 - Campo **mtype**:
@@ -266,13 +266,13 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Estructura de Paquetes — IP
 
-![alt text](image-8.png)
+![alt text](imagenes/image-8.png)
 
 Campos principales: Version, IHL, Type of Service, Total Length, Identification, Flags, Fragment Offset, TTL, Protocol, Header Checksum, Source/Dest Address, Options, Data.
 
 ### Estructura de Paquetes — TCP y UDP
 
-![alt text](image-9.png)
+![alt text](imagenes/image-9.png)
 
 | TCP | UDP |
 |---|---|
@@ -283,7 +283,7 @@ Campos principales: Version, IHL, Type of Service, Total Length, Identification,
 
 ### Sockets — Flujo de uso TCP
 
-![Flujo de sockets TCP entre Server y Client](Clase02_imagenes/pag-43.png)
+![Flujo de sockets TCP entre Server y Client](imagenes/Clase02_imagenes/pag-43.png)
 
 Server: `socket() → bind() → listen() → accept() → read()/write() → close()`
 Client: `socket() → connect() → write()/read() → close()`
@@ -292,27 +292,27 @@ Client: `socket() → connect() → write()/read() → close()`
 
 ### Sockets — Flujo de uso UDP
 
-![Flujo de sockets UDP entre Server y Client](Clase02_imagenes/pag-44.png)
+![Flujo de sockets UDP entre Server y Client](imagenes/Clase02_imagenes/pag-44.png)
 
 Server: `socket() → bind() → recvfrom()/sendto() → close()`
 Client: `socket() → sendto()/recvfrom() → close()`
 
 ### Mensajes Sincrónicos vs Asincrónicos
 
-![Diagrama de mensajes sincrónicos vs asincrónicos](Clase02_imagenes/pag-45.png)
+![Diagrama de mensajes sincrónicos vs asincrónicos](imagenes/Clase02_imagenes/pag-45.png)
 
 - **Sincrónico**: el cliente queda **bloqueado** (Active) esperando la respuesta del servidor entre el *Request* y la *Response*.
 - **Asincrónico**: el cliente queda **libre** (Idle) tras enviar el *Request*, y retoma actividad cuando llega la *Response*.
 
 ### Congestión de Red
 
-![Throughput vs Throttling según la carga de red](Clase02_imagenes/pag-46.png)
+![Throughput vs Throttling según la carga de red](imagenes/Clase02_imagenes/pag-46.png)
 
 **Throughput:** Velocidad de transmisión de información entre componentes en un determinado
 tiempo (== bytes/seg).
 - A medida que aumenta la carga (*load*), el throughput normalizado crece hasta un punto de **congestión moderada**; más allá de cierto punto (B) entra en **congestión severa** y el throughput cae drásticamente.
 
-![Delay promedio según la carga de red](Clase02_imagenes/pag-47.png)
+![Delay promedio según la carga de red](imagenes/Clase02_imagenes/pag-47.png)
 
 **Delay**: Tiempo que tarda un paquete en viajar desde el punto A al punto B.
 
