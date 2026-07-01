@@ -4,8 +4,6 @@
 
 ### Arquitecturas de Capas
 
-![alt text](image-20.png)
-
 - Permiten dividir el problema en sub-problemas.
 - Fomentan el uso de interfaces.
 - Permiten intercambiar componentes reutilizando conectores y protocolos ya definidos.
