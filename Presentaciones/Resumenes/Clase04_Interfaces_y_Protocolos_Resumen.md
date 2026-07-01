@@ -136,7 +136,7 @@ Encapsulación de PDUs entre capas, con tres estrategias posibles:
 
 ### Ejemplo: Múltiples Canales
 
-![Stock Exchange recibiendo datos por canales UDP y TCP de Certified Traders](Clase04_imagenes/pag-35.png)
+![alt text](image-16.png)
 
 Caso de uso: una bolsa de comercio recibe información de muchos operadores distribuidos, con tráfico de paquetes con picos de transferencia.
 - Canales **UDP** para garantizar throughput (aún con repetidos).
@@ -170,7 +170,7 @@ Ejemplo (cURL + HTTP): un comando `curl -X POST -d '{"username":"lalala","passwo
 
 **Ejemplo: TLV (Type-Length-Value)**
 
-![Ejemplo de codificación TLV de una dirección](Clase04_imagenes/pag-29.png)
+![alt text](image-17.png)
 
 Todos los parámetros siguen el formato **Type - Length - Value**:
 - **Type**: indica el tipo de dato/entidad. Tamaño fijo.
@@ -191,14 +191,18 @@ El cliente solicita un archivo (`Opcode 1, read`), el servidor responde con bloq
 
 ### Sincronización de señales
 
-![Protocolo de bajo nivel del sensor DHT11](Clase04_imagenes/pag-33.png)
+![alt text](image-18.png)
 
-En ciertos protocolos es necesario saber dónde empieza una señal para entender la secuencia de paquetes. Ejemplo de bajo nivel: el sensor **DHT11** (humedad y temperatura) envía datos por un pin de comunicación, comenzando con una señal de sincronismo, seguida de 40 bits de data (Integer/Decimal Byte de RH + Integer/Decimal Byte de Temp. + Checksum Byte).
+En ciertos protocolos es necesario saber dónde empieza una señal para entender la secuencia de paquetes. 
+
+Ejemplo de bajo nivel: el sensor **DHT11** (humedad y temperatura) envía datos por un pin de comunicación, comenzando con una señal de sincronismo, seguida de 40 bits de data (Integer/Decimal Byte de RH + Integer/Decimal Byte de Temp. + Checksum Byte).
 
 ### Mensajes Sincrónicos vs Asincrónicos
 
 - **Sincrónico**: el cliente queda bloqueado (Active) esperando la respuesta del servidor.
 - **Asincrónico**: el cliente queda libre (Idle) tras enviar el request, y retoma actividad al recibir la respuesta.
+
+![alt text](image-19.png)
 
 ---
 
@@ -297,9 +301,10 @@ Major . Minor . Patch
 - **Minor**: al agregar funcionalidad pero manteniendo retrocompatibilidad.
 - **Patch** (aka build): al introducir correcciones que no afectan la interfaz.
 
+
+
 **Tipos de versionado de API:**
 
-![Distintos clientes consumiendo distintas versiones de una Web API](Clase04_imagenes/pag-49.png)
 
 - **Versionado explícito en URL**: fácil de usar y testear, RESTful compliant (interface uniforme).
 - **Versionado vía HTTP Custom header**: semánticamente incorrecto.
