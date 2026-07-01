@@ -70,7 +70,7 @@ Modelo basado en comunicación **por eventos** entre productores y consumidores.
 
 ### Arquitectura de Publisher-Subscriber
 
-![Publishers y Subscribers conectados a través de un Message Broker](Clase07_imagenes/pat13-13.png)
+![alt text](image-31.png)
 
 Dos posibles arquitecturas:
 - **Basada en tópicos**: publicación y suscripción indicando el tipo de evento, tópico o tag.
@@ -78,7 +78,7 @@ Dos posibles arquitecturas:
 
 ### Implementación con MOMs
 
-![Bus basado en tópicos vs Colas basadas en canales](Clase07_imagenes/pat14-14.png)
+![alt text](image-32.png)
 
 - **Bus** (basado en *topics*): todos los participantes comparten un Message Bus único, publicando (V) o suscribiéndose (S) a ciertos tópicos.
 - **Colas** (basado en canales): cada participante tiene su propia cola dedicada (q1, q2, q3) dentro del sistema de mensajería.
@@ -95,7 +95,7 @@ Dos posibles arquitecturas:
 
 ### Modelo de Procesamiento
 
-![Pipeline con Source, Filter 1-3 y Sink](Clase07_imagenes/pat18-18.png)
+![alt text](image-33.png)
 
 Admite dos modelos de procesamiento:
 - **Worker por Filter**: se asigna una unidad de procesamiento a cada etapa del pipeline. Los items son recibidos por el worker, procesados y enviados a la próxima etapa.
@@ -103,7 +103,7 @@ Admite dos modelos de procesamiento:
 
 ### Etapas secuenciales y paralelas
 
-![Etapas paralelas y secuenciales en un pipeline procesando items](Clase07_imagenes/pat19-19.png)
+![alt text](image-34.png)
 
 Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 - **Paralela**: cada item a procesar es independiente de los anteriores y posteriores, por lo que admite paralelismo.
@@ -116,8 +116,6 @@ Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 
 ### Direct Acyclic Graphs (DAGs)
 
-![Ejemplo de DAG con nodos A, B, C, D, E](Clase07_imagenes/pat22-22.png)
-
 - Se modelan las instrucciones mediante un grafo de flujo de datos.
 - Los nodos indican tareas y las aristas el flujo de información.
 - **Acíclicos**: para todo nodo, no hay un camino que inicie y termine en él.
@@ -125,7 +123,7 @@ Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 
 **Ventajas:**
 
-![DAG procesado de forma serial vs paralela en distintos procesos](Clase07_imagenes/pat23-23.png)
+![alt text](image-35.png)
 
 - Representación natural para *dataflows*.
 - La carga de procesamiento se puede paralelizar (ej. procesar A, B, C, E en un proceso P0 mientras D se procesa en paralelo en P1).
@@ -133,7 +131,7 @@ Cada uno de los *processors* funciona como una etapa, pudiendo ser del tipo:
 
 **Dependencias y non-DAGs:**
 
-![Wait-for graph: DAG (sin ciclos) vs non-DAG con deadlock (cíclico)](Clase07_imagenes/pat24-24.png)
+![alt text](image-36.png)
 
 - También se pueden utilizar DAGs para modelar dependencias entre procesos.
 - Las dependencias implican posibilidad de bloqueo frente al pedido de un recurso de un proceso a otro.
@@ -173,7 +171,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Request-Reply
 
-![Cliente REQ y Servidor REP intercambiando Hello/World](Clase07_imagenes/zmq6-06.png)
+![alt text](image-37.png)
 
 - Modelo Cliente-Servidor convencional (aunque no del todo).
 - **No posee primitiva `accept`**: la primitiva `bind` funciona como `bind + accept`.
@@ -183,7 +181,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Producer-Consumer (Push-Pull)
 
-![Sockets PUSH distribuyendo tareas de forma fair a múltiples PULL Workers](Clase07_imagenes/zmq7-07.png)
+![alt text](image-38.png)
 
 - Comunicación de tareas de un productor a un consumidor.
 - Admite múltiples consumidores y/o múltiples productores.
@@ -192,7 +190,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Publisher-Subscriber
 
-![Publisher PUB conectado a múltiples Subscribers SUB](Clase07_imagenes/zmq8-08.png)
+![alt text](image-39.png)
 
 - Un socket **ZMQ PUB** publica mensajes con el *message pattern*: `id field1 field2 ...fieldN`.
 - N sockets **ZMQ SUB** se registran a los eventos que desean recibir, suscribiéndose al ID del evento.
@@ -202,7 +200,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Pipeline (Push-Pull)
 
-![Ventilator (PUSH) distribuye tareas a Workers (PULL/PUSH) que envían resultados a un Sink (PULL)](Clase07_imagenes/zmq9-09.png)
+![alt text](image-40.png)
 
 - Patrón Productor-Consumidor encadenado (*chaining*): el *chaining* de productores-consumidores da como resultado un pipeline.
 - Los mensajes son consumidos de forma equitativa (**fairness**).
@@ -210,7 +208,7 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 
 ### Patrón: Router-Dealer (Broker)
 
-![Clientes REQ conectados a un broker ROUTER-DEALER que distribuye a servicios REP](Clase07_imagenes/zmq10-10.png)
+![alt text](image-41.png)
 
 - **ROUTER socket**: agrega al mensaje recibido un ID de destinatario.
 - **DEALER socket**: rutea los mensajes de forma justa (**fair**), propagando el ID de origen del mensaje.
