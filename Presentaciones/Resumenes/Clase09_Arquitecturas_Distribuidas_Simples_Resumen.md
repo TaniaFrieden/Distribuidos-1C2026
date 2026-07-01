@@ -8,15 +8,15 @@
 - Permite **centralización** en la toma de decisiones.
 - Suele asumirse que los servidores tienen más capacidades de hardware que los clientes.
 
-![Modelo Cliente-Servidor simple: un Server atendiendo a múltiples Clients](Clase09_imagenes/pag-03.png)
+![alt text](image-42.png)
 
 También puede organizarse de forma **jerárquica**, con servidores intermedios que a su vez actúan como clientes de un servidor superior:
 
-![Cliente-Servidor jerárquico: Server raíz con Servers intermedios atendiendo Clients](Clase09_imagenes/pag-04.png)
+![alt text](image-43.png)
 
 ### Flujos de Comunicación
 
-![Diagrama de secuencia: Client 1 envía mensaje al Server, que lo reenvía a Client 2](Clase09_imagenes/pag-05.png)
+![alt text](image-44.png)
 
 - Los clientes deben conocer la **ubicación del servidor** para poder utilizarlo.
 - Los clientes **no entablan comunicaciones entre sí**, salvo a través del servidor (ej. `msg-for-2` de Client 1 al Server, que el Server reenvía a Client 2 como `msg-from-1`).
@@ -28,7 +28,7 @@ También puede organizarse de forma **jerárquica**, con servidores intermedios 
 
 ## 2. Peer-to-Peer
 
-![Red de Peers interconectados entre sí](Clase09_imagenes/pag-08.png)
+![alt text](image-45.png)
 
 - Se establece una red de nodos que se consideran **pares (peers)** entre sí.
 - Asume capacidades de recursos **similares** entre los pares.
@@ -39,7 +39,7 @@ También puede organizarse de forma **jerárquica**, con servidores intermedios 
 
 ### Flujos de Comunicación
 
-![Esquema mixto: un Server central para descubrimiento, con Peers comunicándose entre sí](Clase09_imagenes/pag-09.png)
+![alt text](image-46.png)
 
 - Es **muy difícil** de establecer la comunicación entre pares directamente, por lo que se suele usar:
   - Un **esquema mixto** tipo cliente-servidor para proveer un **servicio de nombres** (descubrimiento de otros peers).
@@ -50,7 +50,7 @@ También puede organizarse de forma **jerárquica**, con servidores intermedios 
 
 ## 3. RPC (Remote Procedure Call)
 
-![Cliente llamando a doOperation(input) y recibiendo doOperationResult del Server](Clase09_imagenes/pag-11.png)
+![alt text](image-48.png)
 
 - Permite la **ejecución remota de procedimientos**.
 - Modelo Cliente-Servidor:
@@ -100,7 +100,7 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ### gRPC
 
-![Cliente y Servidor comunicados mediante gRPC Stub y gRPC Server sobre proto/HTTP](Clase09_imagenes/pag-17.png)
+![alt text](image-49.png)
 
 - Definición de RPC basada en:
   - **HTTP2** para transporte.
@@ -114,7 +114,7 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ## 4. Distributed Objects (Objetos Distribuidos)
 
-![Server exponiendo Object 1 y Object 2 a través de un Dispatcher, consultado por varios Clients](Clase09_imagenes/pag-19.png)
+![alt text](image-50.png)
 
 - Los servidores ya no proveen **servicios** sino **objetos**.
 - Existe un **middleware** que oculta la complejidad de:
@@ -132,7 +132,7 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ### CORBA
 
-![Arquitectura CORBA: Client con Stub y Server con Skeleton sobre un Object Request Broker (ORB)](Clase09_imagenes/pag-21.png)
+![alt text](image-51.png)
 
 - Estándar definido por comité, con soporte en múltiples lenguajes.
 - Actualmente **en vías de deprecación**.
@@ -151,7 +151,7 @@ El flujo completo de una llamada RPC: el cliente invoca el `Procedure()` → el 
 
 ### RMI (Remote Method Invocation)
 
-![Cliente y Servidor conectados a través de Stub/Skeleton y Remote Reference Layer, con un Registry para el descubrimiento](Clase09_imagenes/pag-27.png)
+![alt text](image-52.png)
 
 - Versión optimizada de Distributed Objects, propia de **Java**.
 - Requiere los siguientes pasos:
