@@ -53,7 +53,6 @@
 
 ### Vista lógica
 
-![Middleware como capa entre SO y aplicaciones, en múltiples computadoras](Clase05_imagenes/m11-11.png)
 
 Capa de software entre el sistema operativo y la capa de aplicación/usuario, para proveer una **vista única** del sistema (independientemente de la computadora física donde corra cada aplicación).
 
@@ -87,15 +86,14 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 - **Transactional Procedure**: permiten garantizar transaccionalidad de operaciones respecto de datos; conectan muchas fuentes de datos y permiten un acceso transparente al grupo; poseen políticas de reintentos y retención de datos frente a caídas internas.
 
-![Object Oriented: mensajes hacia objetos que viven dentro del Middleware Host](Clase05_imagenes/m16-16.png)
 
 - **Object Oriented**: mensajes hacia objetos distribuidos; los objetos viven dentro del middleware; esquema de '*marshalling*' para transmitir la información.
 
-![Procedure Oriented: middleware como servidor de funciones invocables](Clase05_imagenes/m17-17.png)
+![alt text](image-21.png)
 
 - **Procedure Oriented**: el middleware trabaja como un servidor de funciones que se pueden invocar; los servicios se pueden explorar y ejecutar, pero no presentan estado para futuras invocaciones.
 
-![Message Oriented: middleware como sistema de mensajería entre aplicaciones](Clase05_imagenes/m18-18.png)
+![alt text](image-22.png)
 
 - **Message Oriented**: funciona como un sistema de mensajería entre las aplicaciones que utilizan el middleware; pueden enviarse mensajes bajo cierto 'tópico' para que los interesados lo reciban (modo *Information Bus*), o con un destinatario definido (modo *Queue*).
 
@@ -113,7 +111,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Centralizado vs Distribuido
 
-![MOM Centralizado (con un Message Broker) vs Distribuido (apps comunicadas directamente por la red)](Clase05_imagenes/m22-22.png)
+![alt text](image-23.png)
 
 - **Centralizado**: todas las aplicaciones se comunican a través de un **Message Broker** único.
 - **Distribuido**: las aplicaciones se comunican directamente entre sí a través de la red, sin un punto central.
@@ -136,7 +134,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Modelo Asincrónico del MOM
 
-![Colas intermedias entre Sender y Receiver, soportando distintos estados de actividad](Clase05_imagenes/m25-25.png)
+![alt text](image-24.png)
 
 **Pros:**
 - Se modela naturalmente con colas.
@@ -154,7 +152,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Colas de Mensajes
 
-![Sender y Receiver con colas privadas sincronizadas](Clase05_imagenes/m28-28.png)
+![alt text](image-25.png)
 
 - Pueden existir varias colas definidas dentro del MOM.
 - Tienen nombre y longitud definidas.
@@ -163,7 +161,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Brokers
 
-![Broker con lógica de Filtering y Routing entre Sender y Receiver](Clase05_imagenes/m29-29.png)
+![alt text](image-26.png)
 
 - Proveen transparencia de localización tanto al Emisor como al Receptor.
 - Soportan lógica en el middleware para **filtrar y modificar** mensajes (*Filtering*, *Routing*).
@@ -175,7 +173,7 @@ Capa de software entre el sistema operativo y la capa de aplicación/usuario, pa
 
 ### Conceptos
 
-![Arquitectura de RabbitMQ: Producers → Exchanges → Queues → Consumers](Clase05_imagenes/rmq3-3.png)
+![alt text](image-27.png)
 
 - **Queues**:
   - Nombradas vs TaskQueues vs Anónimas.
@@ -189,7 +187,7 @@ El flujo general es: *Producers* → *Exchanges* → *Queues* → *Consumers*, t
 
 ### Patrón: Publisher-Subscriber (Exchange Fanout)
 
-![Patrón Publisher-Subscriber con exchange fanout](Clase05_imagenes/rmq4-4.png)
+![alt text](image-28.png)
 
 - El "Productor" (en realidad un **Publisher**) envía mensajes a un exchange de tipo **fanout**.
 - Los "Consumidores" (en realidad **Subscribers**) crean colas anónimas para recibir mensajes del productor; estas colas son *bindeadas* al exchange del productor para comenzar a recibir mensajes.
@@ -197,7 +195,7 @@ El flujo general es: *Producers* → *Exchanges* → *Queues* → *Consumers*, t
 
 ### Patrón: Routing (Exchange Direct)
 
-![Patrón Routing con exchange direct y routing_key](Clase05_imagenes/rmq5-5.png)
+![alt text](image-29.png)
 
 - El **Productor** envía mensajes a un exchange de tipo **direct**, adosando al mensaje un identificador de routeo (`routing_key`).
 - El **Consumidor** realiza *binding* al exchange direct con los `routing_keys` que desea recibir.
@@ -205,7 +203,7 @@ El flujo general es: *Producers* → *Exchanges* → *Queues* → *Consumers*, t
 
 ### Patrón: Topic (Exchange Topic)
 
-![Patrón Topic con exchange topic y wildcards * y #](Clase05_imagenes/rmq6-6.png)
+![alt text](image-30.png)
 
 - El **Productor** envía mensajes a un exchange de tipo **topic**, adosando un `routing_key`.
 - El **Consumidor** realiza *binding* al exchange topic con los patrones que desea recibir.
