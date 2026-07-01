@@ -14,26 +14,19 @@
 
 > "El esfuerzo dedicado a lograr altas tasas de procesamiento paralelo se desperdicia a menos que vaya acompañado de logros en las tasas de procesamiento secuencial de magnitud muy similar..."
 
-- Corolario: todo trabajo de cómputo se divide en una fracción **Secuencial** (W_ser = f) y una **Paralela** (W_par = 1 - f), donde **T = W_ser + W_par**.
-- Usando P unidades de cómputo, el tiempo total se reduce: **T_P = W_ser + W_par / P**.
-- Se define el **Speedup** como el ratio de optimización: **S_P = T_1 / T_P**.
-  - Reemplazando: **S_P ≤ 1 / (f + (1 - f) / P)**.
-  - Con P → ∞: **S_∞ ≤ 1 / f**.
+- Corolario: todo trabajo de cómputo se divide en fracciones secuenciales y paralelas
+![alt text](image-10.png)
 
-![Ilustración de la división serial/paralela con P=1,2,4,8](Clase03_imagenes/pag-06.png)
+- Corolario: utilizando P unidades de cómputo, el tiempo de ejecución total puede reducirse
+![alt text](image-12.png)
+
 
 - El **Speedup máximo** está acotado **por la fracción de tiempo que no puede ser paralelizable**, asumiendo que la fracción paralelizable se distribuye **uniformemente** entre los procesadores.
 
-![Curvas de Speedup según fracción serial y cantidad de workers](Clase03_imagenes/pag-07.png)
+**Speedup** : 
+Ratio de cuánto tiempo se gana al meter P procesadores:
 
-Ejemplo numérico (f = 0.01):
-
-| f | Processors | S_P |
-|---|---|---|
-| 0.01 | 100 | 50 |
-| 0.01 | 1000 | 90 |
-| 0.01 | 10000 | 99 |
-| 0.01 | inf | 100 |
+![alt text](image-13.png)
 
 ### Ley de Gustafson
 
@@ -52,16 +45,10 @@ Ejemplo numérico (f = 0.01):
   - *Greedy scheduling*: proceso disponible ⇒ tarea ejecutada.
   - Tiempo de acceso a memoria despreciable.
   - Tiempo de comunicación entre procesos despreciable.
-  - Posibilidad de analizar la operación/algoritmo en caja blanca.
 
 **Definiciones:**
-- **T₁ (work)**: tiempo en ejecutar la operación/algoritmo con 1 solo proceso.
-- **T_inf (span)**: tiempo en ejecutar el **camino crítico** de la operación/algoritmo.
-
-| Cota | Speedup | Consideraciones |
-|---|---|---|
-| Superior | min(P, T₁/T_inf) | Se obtiene P en escenarios de Speedup lineal |
-| Inferior | (T₁ - T_inf)/P + T_inf | El trabajo se puede dividir en perfecta e imperfectamente paralelizable |
+-  𝑇1 == work == trabajo total → tiempo total si el programa se ejecutara de manera completamente serial (en un solo hilo)
+- 𝑇∞ == span == camino crítico → tiempo mínimo si el programa se ejecutara en un número infinito de procesadores; representa la secuencia más larga de dependencias entre tareas
 
 **Ejemplo práctico** (grafo de dependencias de tareas):
 
@@ -108,24 +95,16 @@ Notación: **Task** (cuadrado azul), **Data** (redondeado verde), **Fork** (punt
 
 ## 2. Multi-Processors
 
-### Modelo Físico
-
-![Modelo físico de una CPU con múltiples cores y caches](Clase03_imagenes/pag-18.png)
-
-- Una CPU puede tener varios **cores**, cada uno con sus propios registros y caché L1, compartiendo caché L2 (entre pares de cores) y L3 (a nivel de CPU).
-- La CPU se conecta a través de un bus a: Network Interface Controller, Main Memory, Disk Controller y GPU (con su propia memoria).
-- Un sistema puede tener **varias CPUs** conectadas al mismo bus compartiendo Memoria Principal, NIC, Disco y GPU.
-
 ### Taxonomía de Flynn
 
 Clasificación de sistemas de acuerdo a la cardinalidad de flujos de instrucciones (procesadores) y flujos de datos (memoria).
 
-![SISD vs SIMD](Clase03_imagenes/pag-20.png)
+![alt text](image-14.png)
 
 - **SISD** (*Single Instruction Single Data*): modelo estándar de un procesador sin paralelismo.
 - **SIMD**: *array processors*. Ejemplo: GPU.
 
-![MISD vs MIMD](Clase03_imagenes/pag-21.png)
+![alt text](image-15.png)
 
 - **MISD**: no son usuales (*redundant computation*, data-pipelines).
 - **MIMD**: se divide en dos modelos:

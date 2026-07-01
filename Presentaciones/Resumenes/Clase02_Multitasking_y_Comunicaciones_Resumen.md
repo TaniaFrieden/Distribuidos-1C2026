@@ -199,8 +199,6 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Sockets
 
-![alt text](image-4.png)
-
 - Permiten comunicar dos procesos a través de un canal de comunicación (*endpoint*): `int socket(int domain, int type, 0);`
 - **Domain**:
   - `AF_UNIX`: Unix socket.
@@ -210,7 +208,6 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
   - `SOCK_STREAM` → TCP
   - `SOCK_RAW` → acceso de bajo nivel
 
-**Ejercicio Rendezvous con IPCs**: N threads/procesos deben generar M mensajes, sincronizándose por ronda, resuelto utilizando **Shared Memory / Semaphores** o **Message Queues**.
 
 ---
 
@@ -283,18 +280,6 @@ Campos principales: Version, IHL, Type of Service, Total Length, Identification,
 | Asegura entrega y orden | Sin garantías (*best effort*) |
 | Header complejo: Sequence Number, Ack Number, Flags, Window (sliding window), Checksum, Urgent Pointer, Options | Header simple: Length, Checksum |
 
-### Sockets — Primitivas
-
-```
-socket(domain: int, type: int, protocol: int): int
-bind(fd: int, addr: struct sockaddr*, addrlen: int): int
-listen(fd: int, backlog: int): int
-accept(fd: int, addr: struct sockaddr*, addrlen: int): int
-connect(fd: int, addr: struct sockaddr*, addrlen: int): int
-send(fd: int, buf: void*, buflen: int, flags: int): int
-receive(fd: int, buf: void*, buflen: int, flags: int): int
-close(fd: int): int
-```
 
 ### Sockets — Flujo de uso TCP
 
@@ -323,9 +308,13 @@ Client: `socket() → sendto()/recvfrom() → close()`
 
 ![Throughput vs Throttling según la carga de red](Clase02_imagenes/pag-46.png)
 
+**Throughput:** Velocidad de transmisión de información entre componentes en un determinado
+tiempo (== bytes/seg).
 - A medida que aumenta la carga (*load*), el throughput normalizado crece hasta un punto de **congestión moderada**; más allá de cierto punto (B) entra en **congestión severa** y el throughput cae drásticamente.
 
 ![Delay promedio según la carga de red](Clase02_imagenes/pag-47.png)
+
+**Delay**: Tiempo que tarda un paquete en viajar desde el punto A al punto B.
 
 - El *delay* promedio de **todos los paquetes** crece de forma muy pronunciada con la carga.
 - El *delay* promedio de los **paquetes que efectivamente se entregan** crece de forma más moderada y se estabiliza.
