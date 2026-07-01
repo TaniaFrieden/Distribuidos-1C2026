@@ -69,8 +69,6 @@ func CompareAndSwapUint32(addr *uint32, old uint32, new uint32) (swapped bool)
 
 ### Semáforos
 
-![Diagrama de semáforo con tokens](Clase02_imagenes/pag-12.png)
-
 - Variable entera utilizada para acceder a **recursos compartidos** (ej. Shared Memory). Queda definida por los valores que puede tomar (ej. S = {0,1,2}).
 - Operaciones válidas:
   - **signal (P)**: incrementa el valor de S.
@@ -78,8 +76,6 @@ func CompareAndSwapUint32(addr *uint32, old uint32, new uint32) (swapped bool)
 - **Mutex** (S = {0,1}): caso particular usado para acceder a **secciones críticas**.
 
 ### Monitores
-
-![Diagrama de monitor](Clase02_imagenes/pag-14.png)
 
 Un monitor encapsula variables compartidas y expone operaciones que pasan por mecanismos de sincronización internos, atendiendo a una cola de pedidos.
 
@@ -112,7 +108,7 @@ cv.release()
 
 ### Barrera
 
-![Diagrama de barrera](Clase02_imagenes/pag-17.png)
+
 
 Mecanismo que detiene a cada proceso/thread hasta que todos llegan a un mismo punto de sincronización (GO), recién ahí continúan en conjunto.
 
@@ -130,7 +126,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ## 3. IPCs (Inter-Process Communication)
 
-![Ejemplo de IPC vía Binder Protocol entre procesos](Clase02_imagenes/pag-22.png)
+![alt text](image.png)
 
 - Permiten la comunicación entre dos o más procesos.
 - Provistos por el **Sistema Operativo**.
@@ -163,7 +159,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Shared Memory
 
-![Diagrama de Shared Memory](Clase02_imagenes/pag-25.png)
+![alt text](image-1.png)
 
 - Mecanismo provisto por el SO (Linux) para compartir recursos.
 - Abstracción inexistente en threads: el heap entre dos threads de un mismo proceso ya es compartido naturalmente.
@@ -172,7 +168,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### File Locks
 
-![Diagrama de File Locks (R/W)](Clase02_imagenes/pag-26.png)
+
 
 - Control de acceso a un file descriptor: `int flock(int fd, int operation);`
 - Existen dos tipos:
@@ -181,7 +177,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Pipes y Fifos
 
-![Diagrama de Pipes y FIFOs](Clase02_imagenes/pag-28.png)
+![alt text](image-2.png)
 
 - Pasaje de información directa entre 2 procesos.
 - En Linux: API de un archivo para escritura/lectura.
@@ -190,7 +186,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Message Queues (System V)
 
-![Diagrama de Message Queues](Clase02_imagenes/pag-29.png)
+![alt text](image-3.png)
 
 - Los procesos escriben/reciben bloques de bytes.
 - Campo **mtype**:
@@ -203,7 +199,7 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Sockets
 
-![Diagrama de Sockets (Server/Client)](Clase02_imagenes/pag-30.png)
+![alt text](image-4.png)
 
 - Permiten comunicar dos procesos a través de un canal de comunicación (*endpoint*): `int socket(int domain, int type, 0);`
 - **Domain**:
@@ -222,8 +218,6 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Productor-Consumidor
 
-![Diagrama Productor-Consumidor](Clase02_imagenes/pag-33.png)
-
 - Los **productores** agregan paquetes en el buffer; los **consumidores** extraen paquetes del buffer.
 - Situaciones de bloqueo:
   - El productor intenta agregar un paquete cuando el buffer está **lleno**.
@@ -232,8 +226,6 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 - Pregunta de diseño clave: ¿el buffer es acotado o infinito?
 
 ### Lectores-Escritores
-
-![Diagrama Lectores-Escritores](Clase02_imagenes/pag-34.png)
 
 - Procesos intentan acceder a una memoria compartida (ej. acceso a una base de datos).
 - Dos tipos de procesos: **Lectores** y **Escritores**.
@@ -277,13 +269,13 @@ Sincronización mediante **paso de mensajes** (*Message Passing*) entre dos proc
 
 ### Estructura de Paquetes — IP
 
-![Estructura de un paquete IP](Clase02_imagenes/pag-40.png)
+![alt text](image-8.png)
 
 Campos principales: Version, IHL, Type of Service, Total Length, Identification, Flags, Fragment Offset, TTL, Protocol, Header Checksum, Source/Dest Address, Options, Data.
 
 ### Estructura de Paquetes — TCP y UDP
 
-![Estructura de paquetes TCP y UDP](Clase02_imagenes/pag-41.png)
+![alt text](image-9.png)
 
 | TCP | UDP |
 |---|---|
