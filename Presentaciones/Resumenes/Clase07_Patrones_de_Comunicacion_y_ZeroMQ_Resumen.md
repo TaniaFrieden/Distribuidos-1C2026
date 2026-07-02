@@ -215,3 +215,27 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 - Ambos sockets permiten recibir mensajes de múltiples sockets a la vez.
 - Ambos sockets son **asincrónicos**: se necesita **Poll** para recibir mensajes.
 - Este patrón permite construir un **broker** intermedio entre múltiples clientes (REQ) y múltiples servicios (REP).
+
+---
+
+## 5. RabbitMQ vs ZeroMQ
+
+| Aspecto | **RabbitMQ** | **ZeroMQ** |
+|---|---|---|
+| **Arquitectura** | Con **broker** (proceso intermediario central) | **Sin broker** (brokerless) — es una librería que se linkea directo en la app |
+| **Qué es** | Un servidor de mensajería completo (middleware) | Una librería de sockets "esteroidados" (no un servidor) |
+| **Instalación** | Requiere levantar un servicio/proceso aparte (Erlang) | No requiere proceso externo, solo la librería en el código |
+| **Primitivas** | `publish`, `consume`, `ack/nack`, `exchange.declare`, `queue.declare`, `bind` | `zmq_send`, `zmq_recv`, `connect`, `bind` (mucho más bajo nivel) |
+| **Enrutamiento de mensajes** | Lo hace el **broker** vía Exchanges (direct, topic, fanout, headers) + bindings | Lo hace la **aplicación**, usando patrones de sockets (PUB/SUB, REQ/REP, PUSH/PULL, ROUTER/DEALER) |
+| **Persistencia de mensajes** | Sí — colas pueden ser **durables**, mensajes persistidos en disco | No — no hay noción de cola persistente propia; hay que implementarlo a mano si se necesita |
+| **Confiabilidad / Garantías** | Alta: ack/nack, publisher confirms, dead-letter queues, at-least-once nativo | Baja/manual: el protocolo no da garantías de entrega por sí solo (hay que implementarlas, ej. patrón Lazy Pirate) |
+| **Semántica de entrega** | At-least-once (con ack) o at-most-once (sin ack) fácilmente configurable | Depende 100% de lo que implemente el programador |
+| **Desacople productor-consumidor** | Total: el broker guarda mensajes aunque el consumidor esté offline | Limitado: si no hay un peer conectado, el mensaje se puede perder (según el patrón usado) |
+| **Transportes soportados** | TCP (AMQP), con plugins para otros | `tcp://`, `inproc://`, `ipc://`, `pgm://`/`epgm://` (multicast) |
+| **Rendimiento / Latencia** | Menor throughput, mayor latencia (por el salto extra al broker) | Muy alto throughput, latencia mínima (comunicación directa entre peers) |
+| **Escalabilidad** | Escala centralizando en el broker (clustering, federation, mirrored queues) | Escala de forma descentralizada, la app arma su propia topología |
+| **Complejidad para el desarrollador** | Menor: el broker resuelve ruteo, colas, persistencia, reintentos | Mayor: el programador debe construir esas garantías si las necesita |
+| **Punto único de falla (SPOF)** | El broker puede serlo (mitigable con clustering) | No hay broker → no hay ese SPOF, pero la responsabilidad se traslada a la app |
+| **Casos de uso típicos** | Colas de tareas, integración de microservicios, sistemas donde se necesita persistencia/garantías fuertes | Sistemas de baja latencia, HPC, trading, comunicación entre componentes de un mismo sistema/proceso |
+
+**En una frase:** RabbitMQ = mensajería confiable y con garantías, a costo de tener un broker central y más overhead. ZeroMQ = comunicación ultra rápida y flexible tipo "sockets mejorados", pero sin garantías de entrega — esas las tenés que construir vos.
