@@ -216,6 +216,25 @@ ZeroMQ describe sus sockets como una evolución "sobrecargada" de un socket TCP 
 - Ambos sockets son **asincrónicos**: se necesita **Poll** para recibir mensajes.
 - Este patrón permite construir un **broker** intermedio entre múltiples clientes (REQ) y múltiples servicios (REP).
 
+### Tabla comparativa de patrones ZeroMQ
+
+| Patrón | Sockets involucrados | Configuración de sockets | Comunicación | Uso típico |
+|---|---|---|---|---|
+| **Request-Reply** | `REQ` ↔ `REP` | Cliente: `zmq.REQ` + `connect()`. Servidor: `zmq.REP` + `bind()`. Ciclo estricto: send→recv→send→recv (lockstep) | Síncrona, 1 a 1 | RPC simple, petición/respuesta bloqueante |
+| **Router-Dealer** | `ROUTER` ↔ `DEALER` | Servidor: `zmq.ROUTER` + `bind()`, identidad implícita por frame. Cliente: `zmq.DEALER` + `connect()`, opcionalmente `setsockopt(zmq.IDENTITY, ...)` | Asíncrona, N a N | Broker intermedio, manejo concurrente de múltiples clientes |
+| **Publish-Subscribe** | `PUB` ↔ `SUB` | Publicador: `zmq.PUB` + `bind()`. Suscriptor: `zmq.SUB` + `connect()` + `setsockopt(zmq.SUBSCRIBE, b"topic")` (vacío `b""` = todo) | Asíncrona, 1 a N (broadcast) | Difusión de eventos, notificaciones, feeds de datos |
+| **XPub-XSub** | `XPUB` ↔ `XSUB` | Proxy/broker intermedio: `zmq.XPUB` + `bind()` (recibe suscripciones como mensajes) y `zmq.XSUB` + `connect()`. Se usa con `zmq.proxy()` | Asíncrona, N a N | Brokers PUB/SUB escalables con múltiples publishers |
+| **Pipeline (Push-Pull)** | `PUSH` → `PULL` | Ventilador: `zmq.PUSH` + `bind()`. Workers: `zmq.PULL` + `connect()`. Salida: `PUSH` (workers) → `PULL` (sink) + `bind()` | Unidireccional, round-robin (fairness), 1 a N (o N a 1) | Distribución de tareas paralelas, pipelines de procesamiento |
+| **Exclusive Pair** | `PAIR` ↔ `PAIR` | Ambos extremos: `zmq.PAIR`, uno hace `bind()` y el otro `connect()` | Bidireccional, 1 a 1 exclusiva | Comunicación entre hilos de un mismo proceso (inproc) |
+| **Router-Router** | `ROUTER` ↔ `ROUTER` | Ambos: `zmq.ROUTER`, uno `bind()` y otro `connect()`, requiere `setsockopt(zmq.IDENTITY, ...)` en ambos lados | Asíncrona, N a N con direccionamiento explícito | Comunicación peer-to-peer entre nodos con identidad conocida |
+
+**Notas generales sobre configuración de sockets:**
+- **Transporte:** `tcp://`, `ipc://`, `inproc://`, `pgm://` — se define en la URL de `bind`/`connect`.
+- **`bind()` vs `connect()`:** por convención, el componente más estable (broker/servidor) hace `bind()`; los componentes efímeros (clientes/workers) hacen `connect()`.
+- **`inproc://`** requiere que el `bind()` se ejecute antes que el `connect()` (mismo contexto).
+- **HWM (`zmq.SNDHWM` / `zmq.RCVHWM`):** controla el buffer máximo antes de bloquear o descartar mensajes — clave en PUB/SUB y PUSH/PULL para evitar pérdida o memoria descontrolada.
+- **`zmq.LINGER`:** tiempo que espera un socket al cerrarse para enviar mensajes pendientes.
+
 ---
 
 ## 5. RabbitMQ vs ZeroMQ
