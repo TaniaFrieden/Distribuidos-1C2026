@@ -63,7 +63,7 @@
 3. **Paso 3 — Map de Shards en Mappers**: el worker lee el Input data, filtra los datos recibidos en formato key/value, y ejecuta la función provista por el usuario sobre cada par que pasó el filtro, produciendo un *valor intermedio* por cada par.
 4. **Paso 4a — Creación de Archivos Intermedios (IF)**:
 
-   ![Map Worker procesando un Chunk y generando un archivo Intermedio (IF)](imagenes/Clase10_imagenes/pag-15.png)
+![alt text](imagenes/Clase10_imagenes/image.png)
 
    Cada key/value intermedio producido es *bufferizado* y escrito periódicamente en disco local. La data es particionada en R regiones usando una función de particionamiento. El Map Worker notifica al proceso master cuando termina de procesar el chunk y le envía la ubicación del archivo intermedio; el master envía la ubicación de los IF a los Reduce workers.
 
@@ -71,13 +71,13 @@
 
 6. **Paso 5**:
 
-   ![Reduce Workers reciben datos intermedios de múltiples Map Workers vía RPC](imagenes/Clase10_imagenes/pag-17.png)
+    ![alt text](imagenes/Clase10_imagenes/image-1.png)
 
    Los Reduce Workers reciben la ubicación de los archivos intermedios para la partición que deben procesar (usando **RPC** para leer la data del disco local de los Mappers). Al recibir la data intermedia, ordenan la data por key y agrupan todas las ocurrencias de la misma key.
 
 7. **Paso 6**:
 
-   ![Reduce Worker combinando múltiples archivos intermedios (IF) en un Output File](imagenes/Clase10_imagenes/pag-18.png)
+   ![alt text](imagenes/Clase10_imagenes/image-2.png)
 
    El Reduce worker lee la data agrupada por Key, aplica la función `Reduce` del usuario sobre cada set de datos, y el output de la función es almacenado en un *output file*. Se despierta al proceso del usuario indicándole la ubicación de los output files.
 
@@ -168,7 +168,7 @@ reduce(string key, list value):
 
 ### Introducción
 
-![Master Node ejecutando mpirun que coordina varios Nodes con procesos mpi](imagenes/Clase10_imagenes/pag-33.png)
+![alt text](imagenes/Clase10_imagenes/image-3.png)
 
 - Basado en **transmisión y recepción de mensajes**.
 - Ejecución transparente de 1 a N nodos.
@@ -250,7 +250,7 @@ stats.addSink(new RollingSink(path));                                           
 
 ### Bloques de un Pipeline
 
-![Pipeline de Flink: Source -> map() -> keyBy/window/apply -> Sink](imagenes/Clase10_imagenes/pag-40.png)
+![alt text](imagenes/Clase10_imagenes/image-4.png)
 
 - **Source**: bloque capaz de inyectar datos al pipeline.
 - **Transformation** (operador): nodo de modificación de datos o filtrado de los mismos.
@@ -264,7 +264,7 @@ Flink permite agrupar eventos de un stream en **ventanas** (por tiempo o por can
 
 ### Casos de Uso
 
-![Periodic ETL: lee de una DB transaccional y escribe a otra DB/filesystem; Data Pipeline: ingiere eventos en tiempo real con una Continuous Application con estado](imagenes/Clase10_imagenes/pag-42.png)
+![alt text](imagenes/Clase10_imagenes/image-5.png)
 
 - **Extract Transform Load (ETL)**: operaciones programadas de carga y modificación de datos para su posterior análisis, con origen y destino definidos en una base de datos.
 - **Data Pipelines**: tareas de procesamiento recurrentes, basadas en la ocurrencia de eventos (en tiempo real).
