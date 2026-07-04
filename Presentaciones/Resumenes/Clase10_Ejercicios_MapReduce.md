@@ -8,7 +8,11 @@
 2. [Ejercicio 2 — Mensajes de un chatbot](#ejercicio-2--mensajes-de-un-chatbot)
    - a) Clientes atendidos por día del mes
    - b) Teléfonos con más de 10 mensajes en un mismo día
-3. [`emit` vs `emitIntermediate` vs `emitAll` (y `reduceAll`)](#emit-vs-emitintermediate-vs-emitall-y-reduceall)
+3. [Ejercicio 3 — Compras de moneda extranjera de un banco](#ejercicio-3--compras-de-moneda-extranjera-de-un-banco)
+   - a) Monto promedio en AR$ para compra de USD, por día
+   - b) Cuentas que compraron USD en 2 o más días consecutivos
+   - c) Cuentas que compraron más USD que la media
+4. [`emit` vs `emitIntermediate` vs `emitAll` (y `reduceAll`)](#emit-vs-emitintermediate-vs-emitall-y-reduceall)
 
 ---
 
@@ -481,6 +485,216 @@ Solo aparece el teléfono `+5491111111111` para el día 5, donde superó el umbr
 
 ---
 
+# Ejercicio 3 — Compras de moneda extranjera de un banco
+
+Ejercicio: dado un listado de tuplas `(fecha, num-cuenta, cod-divisa, cantidad-divisas, tasa-cambio-AR$)` con todas las compras de moneda extranjera de un banco a lo largo del mes, calcular:
+- a) Monto promedio de AR$ utilizado para compra de divisas "USD", por día del mes.
+- b) Listado de números de cuenta que compraron divisas "USD" durante 2 o más días consecutivos.
+- c) Listado de números de cuenta que compraron más divisas "USD" que la media.
+
+## Supuestos
+
+- `fecha` tiene un formato del que se puede derivar el día del mes; se usa la misma función auxiliar `DiaMes(fecha)` de los ejercicios anteriores.
+- El **monto en AR$** de una compra puntual se calcula como `cantidad-divisas * tasa-cambio-AR$` (cantidad de moneda extranjera comprada, multiplicada por su cotización en pesos).
+- Los tres incisos filtran únicamente las compras donde `cod-divisa == "USD"` — las compras de otras divisas (si las hubiera en el log) se descartan.
+- En c), "la media" se calcula sobre el total de USD comprado **por cada cuenta que compró USD al menos una vez** (no sobre todas las cuentas del banco, ya que una cuenta que nunca compró USD no tiene un "monto comprado" definido).
+
+---
+
+## a) Monto promedio de AR$ para compra de USD, por día
+
+### Pseudocódigo
+
+```
+FUNCIÓN Map(clave, valor):
+    // valor: conjunto de tuplas (fecha, num-cuenta, cod-divisa, cantidad-divisas, tasaCambio)
+    PARA CADA (fecha, numCuenta, codDivisa, cantidadDivisas, tasaCambio) EN valor HACER
+        SI codDivisa == "USD" ENTONCES
+            dia ← DiaMes(fecha)
+            montoARS ← cantidadDivisas * tasaCambio
+            Emitir(dia, montoARS)
+        FIN SI
+    FIN PARA
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: día del mes
+    // listaValores: lista de montos en AR$ de las compras de USD de ese día
+    promedio ← Sumar(listaValores) / len(listaValores)
+    Emitir(clave, promedio)
+```
+
+### Qué hace cada parte
+
+- `Map`: descarta cualquier compra que no sea de USD con el `SI codDivisa == "USD"`. Para las que sí son de USD, calcula el monto en pesos de esa compra puntual (`cantidadDivisas * tasaCambio`) y lo emite agrupado por día — `num-cuenta` no se usa en este cálculo.
+- Shuffle: agrupa por día del mes (a lo sumo 31 claves), como en los ejercicios anteriores.
+- `Reduce`: recibe todos los montos en AR$ de compras de USD de un día particular, y calcula el promedio dividiendo la suma por la cantidad de compras de ese día. Es el mismo patrón que Word Count/navegaciones por día, pero promediando en vez de sumar.
+
+### Resultado final
+
+Un conjunto de hasta 31 pares, por ejemplo:
+```
+(1,  185000.50)
+(2,  201340.00)
+(3,  178900.25)
+...
+```
+
+---
+
+## b) Cuentas que compraron USD en 2 o más días consecutivos
+
+### Por qué alcanza con un solo Job
+
+A diferencia del Ejercicio 1b) (URL con más navegaciones), acá **no** hace falta comparar entre distintas cuentas — el criterio "2 o más días consecutivos" se puede evaluar mirando únicamente los días en que compró USD *esa misma cuenta*, sin necesitar los datos de las demás. Es una condición local a cada clave, como en el filtro de "más de 10" de los ejercicios anteriores.
+
+### Pseudocódigo
+
+```
+FUNCIÓN Map(clave, valor):
+    PARA CADA (fecha, numCuenta, codDivisa, cantidadDivisas, tasaCambio) EN valor HACER
+        SI codDivisa == "USD" ENTONCES
+            dia ← DiaMes(fecha)
+            Emitir(numCuenta, dia)
+        FIN SI
+    FIN PARA
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: num-cuenta
+    // listaValores: lista de días en que compró USD (puede tener repetidos)
+    diasOrdenados ← Ordenar(ConjuntoUnico(listaValores))
+    SI ExisteParConsecutivo(diasOrdenados) ENTONCES
+        Emitir(clave, clave)      // solo interesa el número de cuenta, no los días
+    FIN SI
+
+FUNCIÓN ExisteParConsecutivo(diasOrdenados):
+    // función auxiliar: recorre la lista ya ordenada y sin repetidos
+    PARA i DESDE 0 HASTA len(diasOrdenados) - 2 HACER
+        SI diasOrdenados[i+1] - diasOrdenados[i] == 1 ENTONCES
+            RETORNAR verdadero
+        FIN SI
+    FIN PARA
+    RETORNAR falso
+```
+
+### Qué hace cada parte
+
+- `Map`: filtra solo compras de USD y emite `(numCuenta, dia)` — como en el Ejercicio 2a), el valor emitido es un dato (el día), no un contador.
+- Shuffle: agrupa por número de cuenta, formando la lista completa de días en que esa cuenta compró USD durante el mes (con repetidos si compró más de una vez el mismo día).
+- `Reduce`: primero deduplica y ordena los días (`ConjuntoUnico` + `Ordenar`), y después recorre la lista ordenada buscando dos días adyacentes cuya diferencia sea exactamente 1 — eso es lo que significa "consecutivos". Si encuentra al menos un par así, emite **solo el número de cuenta** (`Emitir(clave, clave)`, el mismo patrón que el ejemplo de `Union` del resumen) — el enunciado pide un listado de cuentas, no el detalle de qué días compró.
+
+### Ejemplo paso a paso
+
+Para la cuenta `1001`, el log tiene compras de USD en los días `5, 12, 13, 20` (algunos repetidos):
+```
+Map emite: (1001, 5), (1001, 12), (1001, 12), (1001, 13), (1001, 20)
+```
+Shuffle agrupa:
+```
+1001 -> [5, 12, 12, 13, 20]
+```
+Reduce:
+```
+diasOrdenados = ConjuntoUnico([5,12,12,13,20]) ordenado = [5, 12, 13, 20]
+ExisteParConsecutivo([5,12,13,20]):
+    12 - 5  = 7   -> no
+    13 - 12 = 1   -> SÍ, hay un par consecutivo (12 y 13)
+Emitir(1001, 1001)
+```
+
+**Resultado final (solo números de cuenta):**
+```
+1001
+```
+La cuenta `1001` aparece en la salida porque compró USD dos días seguidos (12 y 13), aunque el resto de sus compras (día 5 y día 20) no sean consecutivas entre sí. La salida es simplemente el listado de cuentas que cumplen la condición — no se informan los días.
+
+---
+
+## c) Cuentas que compraron más USD que la media
+
+### Por qué hacen falta dos Jobs
+
+"La media" es un valor que depende de **todas** las cuentas a la vez (es un promedio global), pero para calcularla primero hay que saber cuánto compró cada cuenta — un resultado que solo existe después de un `Reduce` por cuenta. Es la misma situación que en el Ejercicio 1b): un agregado global que depende de datos ya agrupados por clave necesita un segundo Job encadenado.
+
+### Pseudocódigo — Job 1 (total de USD comprado por cuenta)
+
+```
+FUNCIÓN Map(clave, valor):
+    PARA CADA (fecha, numCuenta, codDivisa, cantidadDivisas, tasaCambio) EN valor HACER
+        SI codDivisa == "USD" ENTONCES
+            Emitir(numCuenta, cantidadDivisas)
+        FIN SI
+    FIN PARA
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: num-cuenta
+    total ← Sumar(listaValores)
+    Emitir(clave, total)     // (num-cuenta, total-usd-comprado)
+```
+
+### Pseudocódigo — Job 2 (comparar contra la media, usando `emitAll`/`reduceAll`)
+
+```
+FUNCIÓN Map(clave, valor):
+    // clave: num-cuenta, valor: total (salida del Job 1)
+    emitAll("", valor)                  // aporta al cálculo de la media global
+    emitIntermediate(clave, valor)      // sigue el flujo normal, sin cambios
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: num-cuenta, listaValores: [total] (un solo elemento, viene del Job 1)
+    media ← reduceAll("", promedio)
+    total ← listaValores[0]
+    SI total > media ENTONCES
+        Emitir(clave, total)
+    FIN SI
+```
+
+### Qué hace cada parte
+
+- Job 1 es un Word-Count clásico: suma el total de USD comprado por cada cuenta.
+- Job 2 usa `emitAll("", valor)` en el `Map` para que **cada** total de cuenta aporte al cálculo de la media global, en paralelo a que ese mismo par siga su camino normal con `emitIntermediate`.
+- En el `Reduce`, `reduceAll("", promedio)` calcula la media de todos los totales (visible por igual en todas las invocaciones de `Reduce`), y cada cuenta simplemente compara **su propio** total contra esa media — sin necesitar ver los totales de las demás cuentas directamente.
+
+Esto es un buen ejemplo de cuándo `emitAll`/`reduceAll` sí resuelven un Job completo por sí solos: acá no hace falta identificar una única cuenta "ganadora" comparando pares entre sí (como si fuera un máximo), sino comparar cada clave contra un **agregado ya calculado** (la media) — un caso perfecto para `reduceAll`.
+
+> Esta misma técnica también podría haberse usado en el Ejercicio 1b) para el Job 2 (en vez de la clave constante `"max"` + barrido manual): con `emitAll("", cantidad)` + `reduceAll("", max)`, cada URL podría comparar su propio conteo contra el máximo global y emitirse solo si coincide. Ver la nota al final de la sección de `emitAll`/`reduceAll`, más abajo.
+
+### Ejemplo paso a paso
+
+Salida del Job 1 (3 cuentas):
+```
+(1001, 500)
+(1002, 900)
+(1003, 100)
+```
+
+**Job 2 — Map:**
+```
+emitAll("", 500)          emitIntermediate(1001, 500)
+emitAll("", 900)          emitIntermediate(1002, 900)
+emitAll("", 100)          emitIntermediate(1003, 100)
+```
+
+**Job 2 — cálculo de la media global (vía `reduceAll`):**
+```
+media = promedio([500, 900, 100]) = 1500 / 3 = 500
+```
+
+**Job 2 — Reduce (una invocación por cuenta):**
+```
+Reduce(1001, [500]) -> 500 > 500? NO -> no emite nada
+Reduce(1002, [900]) -> 900 > 500? SÍ -> Emitir(1002, 900)
+Reduce(1003, [100]) -> 100 > 500? NO -> no emite nada
+```
+
+**Resultado final:**
+```
+(1002, 900)
+```
+
+Solo la cuenta `1002` compró más USD que la media (500); las cuentas `1001` (exactamente en la media) y `1003` (por debajo) no aparecen en la salida.
+
+---
+
 # `emit` vs `emitIntermediate` vs `emitAll` (y `reduceAll`)
 
 ## Fase Map
@@ -552,6 +766,26 @@ FUNCIÓN Reduce(clave, listaValores):
 ```
 `emitAll("", clave)` manda el nombre de cada documento (una vez por Map, es decir, una vez por documento) a la clave global. `reduceAll("", (ordenar, unicos, len))` ordena, deduplica y cuenta esos nombres, dando la **cantidad total de documentos distintos** — dato que ninguna `Reduce(palabra, ...)` podría calcular mirando solo su propia `listaValores` (que solo tiene los documentos donde apareció *esa* palabra). Con ese total, cada palabra puede chequear si apareció en *todos* los documentos.
 
-## Por qué en el Ejercicio 1b) no se usó `emitAll`/`reduceAll`
+## Por qué en el Ejercicio 1b) se usó una clave constante en vez de `emitAll`/`reduceAll` (y cuándo sí conviene usarlas)
 
-`emitAll` se llama **desde `Map`**, sobre datos crudos, *antes* del Shuffle — por eso sirve para agregados que no dependen de agrupar por clave (contar filas totales, contar documentos totales, como en los dos ejemplos anteriores). Pero "cuál URL tiene el conteo máximo" necesita primero el conteo **por URL**, que es resultado de un `Reduce` (no de un `Map`), y recién después comparar esos conteos entre sí. Es una agregación *sobre datos ya reducidos*, algo que `emitAll`/`reduceAll` no cubre — por eso en el Ejercicio 1b) hizo falta encadenar dos Jobs completos en vez de resolverlo con estas primitivas dentro de uno solo.
+`emitAll` se llama **desde `Map`**, sobre los datos que le llegan a esa fase — por eso sirve para agregados que se calculan directamente sobre esos datos, sin necesitar agruparlos por clave primero (contar filas totales, contar documentos totales, promediar valores). En el Ejercicio 1b) resolvimos el Job 2 con una clave constante (`"max"`) y un barrido manual dentro del `Reduce`.
+
+Esa **no** es la única forma: `emitAll`/`reduceAll` también podrían haber resuelto ese mismo Job 2, de forma más prolija:
+
+```
+FUNCIÓN Map(clave, valor):
+    // clave: url, valor: cantidad (salida del Job 1)
+    emitAll("", valor)                  // aporta al cálculo del máximo global
+    emitIntermediate(clave, valor)      // sigue el flujo normal, sin cambios
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: url, listaValores: [cantidad] (un solo elemento, viene del Job 1)
+    maxGlobal ← reduceAll("", max)
+    SI listaValores[0] == maxGlobal ENTONCES
+        emit(clave, listaValores[0])
+    FIN SI
+```
+
+Esto funciona porque `reduceAll("", max)` calcula el máximo global una sola vez y lo deja disponible en **todas** las invocaciones de `Reduce` — cada URL simplemente chequea si su propio conteo coincide con ese máximo. Es exactamente el mismo principio usado en el Ejercicio 3c) (comparar cada clave contra un agregado global calculado con `reduceAll`), solo que ahí el agregador es `promedio` en vez de `max`.
+
+Lo que sí sigue siendo necesario en ambos casos es un **segundo Job**: el agregado que se necesita (máximo, promedio, etc.) depende de datos que ya pasaron por un `Reduce` previo (el conteo por URL, o el total de USD por cuenta), y `emitAll`/`reduceAll` operan sobre los datos que le llegan a *esa* fase de Map — no pueden "saltar hacia atrás" a datos de un Job anterior antes de que ese Job haya terminado de correr.
