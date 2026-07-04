@@ -611,87 +611,200 @@ La cuenta `1001` aparece en la salida porque compró USD dos días seguidos (12 
 
 ## c) Cuentas que compraron más USD que la media
 
-### Por qué hacen falta dos Jobs
+### Qué media se calcula
 
-"La media" es un valor que depende de **todas** las cuentas a la vez (es un promedio global), pero para calcularla primero hay que saber cuánto compró cada cuenta — un resultado que solo existe después de un `Reduce` por cuenta. Es la misma situación que en el Ejercicio 1b): un agregado global que depende de datos ya agrupados por clave necesita un segundo Job encadenado.
+"La media" se interpreta acá como el promedio de **cada transacción individual** de compra de USD (el promedio de `cantidadDivisas` entre todas las compras de USD del banco, sin importar la cuenta) — no el promedio de los totales acumulados por cuenta. Una cuenta se incluye en el listado si **al menos una** de sus transacciones de USD superó esa media.
 
-### Pseudocódigo — Job 1 (total de USD comprado por cuenta)
+### Por qué alcanza con un solo Job
+
+A diferencia de "el total de una cuenta contra la media de los totales" (que sí necesitaría dos Jobs, como en el Ejercicio 1b), acá la media se calcula directamente sobre los datos crudos que ve el `Map` (cada transacción, antes de agrupar) — exactamente el mismo caso que **Word Frequency** en el resumen. Por eso alcanza con `emitAll`/`reduceAll` dentro de un único Job, sin necesitar un Job previo de agregación.
+
+### Pseudocódigo
 
 ```
 FUNCIÓN Map(clave, valor):
     PARA CADA (fecha, numCuenta, codDivisa, cantidadDivisas, tasaCambio) EN valor HACER
         SI codDivisa == "USD" ENTONCES
-            Emitir(numCuenta, cantidadDivisas)
+            emitAll("", cantidadDivisas)                  // aporta a la media global de TODAS las transacciones USD
+            emitIntermediate(numCuenta, cantidadDivisas)  // sigue agrupándose por cuenta, como siempre
         FIN SI
     FIN PARA
 
 FUNCIÓN Reduce(clave, listaValores):
     // clave: num-cuenta
-    total ← Sumar(listaValores)
-    Emitir(clave, total)     // (num-cuenta, total-usd-comprado)
-```
-
-### Pseudocódigo — Job 2 (comparar contra la media, usando `emitAll`/`reduceAll`)
-
-```
-FUNCIÓN Map(clave, valor):
-    // clave: num-cuenta, valor: total (salida del Job 1)
-    emitAll("", valor)                  // aporta al cálculo de la media global
-    emitIntermediate(clave, valor)      // sigue el flujo normal, sin cambios
-
-FUNCIÓN Reduce(clave, listaValores):
-    // clave: num-cuenta, listaValores: [total] (un solo elemento, viene del Job 1)
-    media ← reduceAll("", promedio)
-    total ← listaValores[0]
-    SI total > media ENTONCES
-        Emitir(clave, total)
-    FIN SI
+    // listaValores: cantidad de USD comprada en cada transacción de esa cuenta
+    media ← reduceAll("", promedio)     // media de TODAS las transacciones USD del banco (no solo de esta cuenta)
+    PARA CADA cantidad EN listaValores HACER
+        SI cantidad > media ENTONCES
+            Emitir(clave, clave)        // alcanza con una transacción que supere la media
+            RETORNAR
+        FIN SI
+    FIN PARA
 ```
 
 ### Qué hace cada parte
 
-- Job 1 es un Word-Count clásico: suma el total de USD comprado por cada cuenta.
-- Job 2 usa `emitAll("", valor)` en el `Map` para que **cada** total de cuenta aporte al cálculo de la media global, en paralelo a que ese mismo par siga su camino normal con `emitIntermediate`.
-- En el `Reduce`, `reduceAll("", promedio)` calcula la media de todos los totales (visible por igual en todas las invocaciones de `Reduce`), y cada cuenta simplemente compara **su propio** total contra esa media — sin necesitar ver los totales de las demás cuentas directamente.
+El punto clave del ejercicio es que hace falta un **valor global** (la media de *todas* las transacciones, de *todas* las cuentas) disponible dentro de cada `Reduce`, que normalmente solo ve los datos de *su propia* clave. Por eso el `Map` manda cada compra por **dos canales distintos**, no uno solo.
 
-Esto es un buen ejemplo de cuándo `emitAll`/`reduceAll` sí resuelven un Job completo por sí solos: acá no hace falta identificar una única cuenta "ganadora" comparando pares entre sí (como si fuera un máximo), sino comparar cada clave contra un **agregado ya calculado** (la media) — un caso perfecto para `reduceAll`.
+**`Map`:**
+```
+PARA CADA (fecha, numCuenta, codDivisa, cantidadDivisas, tasaCambio) EN valor HACER
+    SI codDivisa == "USD" ENTONCES
+```
+Por cada compra del chunk, si no es de USD se descarta directamente — `fecha` y `tasaCambio` ni se usan en este ejercicio.
 
-> Esta misma técnica también podría haberse usado en el Ejercicio 1b) para el Job 2 (en vez de la clave constante `"max"` + barrido manual): con `emitAll("", cantidad)` + `reduceAll("", max)`, cada URL podría comparar su propio conteo contra el máximo global y emitirse solo si coincide. Ver la nota al final de la sección de `emitAll`/`reduceAll`, más abajo.
+```
+emitAll("", cantidadDivisas)
+```
+Canal **global**: no importa de qué cuenta sea la compra, la cantidad se aporta a una bolsa común identificada con la clave dummy `""`. Es lo mismo que hace Word Frequency del resumen con `emitAll("", 1)` para el total de palabras — acá, en vez de sumar "1" por palabra, se juntan las cantidades de cada transacción para después promediarlas todas juntas.
+
+```
+emitIntermediate(numCuenta, cantidadDivisas)
+```
+Canal **normal**, el de siempre: la compra va al grupo de su propia cuenta, para que el `Reduce` de esa cuenta vea todas sus transacciones.
+
+Cada compra de USD pasa por **los dos** canales al mismo tiempo — no es "o uno o el otro".
+
+**Shuffle** (dos agrupamientos en paralelo):
+- El canal de `emitAll` no se agrupa por cuenta: todos los valores mandados con clave `""` (de cualquier cuenta) terminan juntos, formando la bolsa global de todas las cantidades.
+- El canal de `emitIntermediate` sí se agrupa por `numCuenta`, como siempre: cada cuenta tiene su propia lista de cantidades compradas.
+
+**`Reduce`:**
+```
+media ← reduceAll("", promedio)
+```
+`reduceAll(clave, agregador)` hace, internamente, dos cosas: (1) junta **todos** los valores que se mandaron con `emitAll` bajo esa misma `clave` (acá `""`) — es decir, arma la lista `[3, 5, 15, 8, 2]` — y (2) le pasa esa lista como argumento a la función `agregador` que se le indicó. Acá el agregador es `promedio`, así que en el fondo `reduceAll("", promedio)` es equivalente a llamar:
+```
+promedio([3, 5, 15, 8, 2]) = 6.6
+```
+`promedio` no es más que una función `f(lista) -> número` (`Sumar(lista) / len(lista)`), igual de genérica que `sum` o `(sort, uniq, len)` en los ejemplos de Word Frequency e Intersect del resumen — lo único que cambia es qué función se le pasa a `reduceAll` como agregador. El resultado (`6.6`) es idéntico para absolutamente todas las invocaciones de `Reduce`, sin importar qué cuenta esté procesando cada una — es la forma de que un cálculo "por cuenta" pueda comparar contra un dato agregado de todo el dataset.
+
+```
+PARA CADA cantidad EN listaValores HACER
+    SI cantidad > media ENTONCES
+        Emitir(clave, clave)
+        RETORNAR
+    FIN SI
+FIN PARA
+```
+Recién ahora, mirando solo las transacciones de *esta* cuenta, recorre una por una. Apenas encuentra una compra que superó la media global, emite el número de cuenta (`Emitir(clave, clave)`, mismo patrón que 3b) y corta (`RETORNAR`) — no hace falta seguir revisando el resto de sus compras, ni emitirla dos veces si tuviera más de una que superase la media.
 
 ### Ejemplo paso a paso
 
-Salida del Job 1 (3 cuentas):
+**Datos de entrada** (compras de USD del mes, ya filtradas):
+
+| Cuenta | Cantidades compradas |
+|---|---|
+| 1001 | 3, 5 |
+| 1002 | 15 |
+| 1003 | 8, 2 |
+
+**Paso 1 — `Map`** (por cada transacción, dos emisiones):
 ```
-(1001, 500)
-(1002, 900)
-(1003, 100)
+Transacción (1001, 3):  emitAll("", 3)   |  emitIntermediate(1001, 3)
+Transacción (1001, 5):  emitAll("", 5)   |  emitIntermediate(1001, 5)
+Transacción (1002, 15): emitAll("", 15)  |  emitIntermediate(1002, 15)
+Transacción (1003, 8):  emitAll("", 8)   |  emitIntermediate(1003, 8)
+Transacción (1003, 2):  emitAll("", 2)   |  emitIntermediate(1003, 2)
 ```
 
-**Job 2 — Map:**
+**Paso 2 — Shuffle** (dos agrupamientos separados):
+
+Bolsa global (de `emitAll`, ignora de qué cuenta viene cada valor):
 ```
-emitAll("", 500)          emitIntermediate(1001, 500)
-emitAll("", 900)          emitIntermediate(1002, 900)
-emitAll("", 100)          emitIntermediate(1003, 100)
+"" -> [3, 5, 15, 8, 2]
 ```
 
-**Job 2 — cálculo de la media global (vía `reduceAll`):**
+Grupos por cuenta (de `emitIntermediate`, el de siempre):
 ```
-media = promedio([500, 900, 100]) = 1500 / 3 = 500
+1001 -> [3, 5]
+1002 -> [15]
+1003 -> [8, 2]
 ```
 
-**Job 2 — Reduce (una invocación por cuenta):**
+**Paso 3 — Cálculo de la media global**, usando la bolsa global:
 ```
-Reduce(1001, [500]) -> 500 > 500? NO -> no emite nada
-Reduce(1002, [900]) -> 900 > 500? SÍ -> Emitir(1002, 900)
-Reduce(1003, [100]) -> 100 > 500? NO -> no emite nada
+media = promedio([3, 5, 15, 8, 2]) = (3+5+15+8+2) / 5 = 33 / 5 = 6.6
+```
+Este `6.6` es el valor que `reduceAll("", promedio)` le devuelve a **cada** invocación de `Reduce`, sin importar qué cuenta esté procesando.
+
+**Paso 4 — `Reduce`, una invocación por cuenta:**
+```
+Reduce(1001, [3, 5]):
+    media = 6.6
+    cantidad=3 -> 3 > 6.6? NO
+    cantidad=5 -> 5 > 6.6? NO
+    -> no emite nada (ninguna de sus compras superó la media)
+
+Reduce(1002, [15]):
+    media = 6.6
+    cantidad=15 -> 15 > 6.6? SÍ
+    -> Emitir(1002, 1002)
+    -> corta (RETORNAR)
+
+Reduce(1003, [8, 2]):
+    media = 6.6
+    cantidad=8 -> 8 > 6.6? SÍ
+    -> Emitir(1003, 1003)
+    -> corta (RETORNAR), sin llegar a mirar el 2
 ```
 
 **Resultado final:**
 ```
-(1002, 900)
+1002
+1003
 ```
 
-Solo la cuenta `1002` compró más USD que la media (500); las cuentas `1001` (exactamente en la media) y `1003` (por debajo) no aparecen en la salida.
+`1003` entra en el listado gracias a su compra de 8, a pesar de que su otra compra (2) esté muy por debajo de la media — alcanza con que **una sola** transacción la supere. `1001` no entra porque ninguna de sus dos compras (3 y 5) llegó a superar los 6.6 de media.
+
+### Diagrama del flujo completo
+
+```
+                    COMPRAS DE USD DEL MES (entrada del Map)
+        (1001,3)     (1001,5)     (1002,15)     (1003,8)     (1003,2)
+             \            \            |            /            /
+              \____________\___________|___________/____________/
+                                       │
+                                       ▼
+                    ┌──────────────────────────────────────┐
+                    │                 MAP                    │
+                    │  por cada compra de USD, dos emisiones: │
+                    │   emitAll("", cantidad)                 │
+                    │   emitIntermediate(cuenta, cantidad)    │
+                    └──────────────────┬───────────────────────┘
+                                       │
+                 ┌─────────────────────┴─────────────────────┐
+                 │                                             │
+                 ▼                                             ▼
+      ┌───────────────────────┐                 ┌────────────────────────────┐
+      │     BOLSA GLOBAL        │                 │      GRUPOS POR CUENTA       │
+      │     (clave "")           │                 │      (shuffle normal)        │
+      │                          │                 │                              │
+      │   [3, 5, 15, 8, 2]       │                 │   1001 -> [3, 5]             │
+      │                          │                 │   1002 -> [15]               │
+      │                          │                 │   1003 -> [8, 2]             │
+      └────────────┬─────────────┘                 └───────────────┬──────────────┘
+                   │                                                │
+                   ▼                                                │
+        reduceAll("", promedio)                                     │
+        internamente llama a:                                       │
+        promedio([3, 5, 15, 8, 2])                                  │
+             media = 6.6  ────────────────────────────────────────┐ │
+                                                                    ▼ ▼
+                                 ┌───────────────────────────────────────────────────┐
+                                 │        REDUCE (una invocación por cuenta)           │
+                                 │        todas reciben el mismo media = 6.6           │
+                                 │                                                      │
+                                 │  Reduce(1001,[3,5])  ninguno > 6.6   -> (no emite)   │
+                                 │  Reduce(1002,[15])   15 > 6.6        -> emite 1002   │
+                                 │  Reduce(1003,[8,2])  8 > 6.6         -> emite 1003   │
+                                 └────────────────────────┬────────────────────────────┘
+                                                          │
+                                                          ▼
+                                          RESULTADO FINAL: 1002, 1003
+```
+
+El diagrama muestra el punto clave: cada compra se bifurca en el `Map` hacia dos destinos distintos (la bolsa global sin agrupar, y el grupo de su propia cuenta), y recién en el `Reduce` esos dos caminos se vuelven a juntar — `reduceAll` trae la media calculada sobre la bolsa global, y se la aplica a la lista de transacciones de cada cuenta.
 
 ---
 
@@ -786,6 +899,6 @@ FUNCIÓN Reduce(clave, listaValores):
     FIN SI
 ```
 
-Esto funciona porque `reduceAll("", max)` calcula el máximo global una sola vez y lo deja disponible en **todas** las invocaciones de `Reduce` — cada URL simplemente chequea si su propio conteo coincide con ese máximo. Es exactamente el mismo principio usado en el Ejercicio 3c) (comparar cada clave contra un agregado global calculado con `reduceAll`), solo que ahí el agregador es `promedio` en vez de `max`.
+Esto funciona porque `reduceAll("", max)` calcula el máximo global una sola vez y lo deja disponible en **todas** las invocaciones de `Reduce` — cada URL simplemente chequea si su propio conteo coincide con ese máximo. Es el mismo principio usado en el Ejercicio 3c) (comparar cada clave contra un agregado global calculado con `reduceAll`, ahí con `promedio` en vez de `max`) — con la diferencia de que en 3c) la media se pudo calcular directamente sobre los datos crudos del `Map` en un único Job, mientras que acá el conteo por URL es resultado de un Job previo, por lo que de cualquier forma hace falta un segundo Job para llegar a este punto.
 
 Lo que sí sigue siendo necesario en ambos casos es un **segundo Job**: el agregado que se necesita (máximo, promedio, etc.) depende de datos que ya pasaron por un `Reduce` previo (el conteo por URL, o el total de USD por cuenta), y `emitAll`/`reduceAll` operan sobre los datos que le llegan a *esa* fase de Map — no pueden "saltar hacia atrás" a datos de un Job anterior antes de que ese Job haya terminado de correr.
