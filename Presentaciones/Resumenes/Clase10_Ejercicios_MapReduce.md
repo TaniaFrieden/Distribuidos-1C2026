@@ -12,7 +12,11 @@
    - a) Monto promedio en AR$ para compra de USD, por día
    - b) Cuentas que compraron USD en 2 o más días consecutivos
    - c) Cuentas que compraron más USD que la media
-4. [`emit` vs `emitIntermediate` vs `emitAll` (y `reduceAll`)](#emit-vs-emitintermediate-vs-emitall-y-reduceall)
+4. [Ejercicio 4 — Llamadas de una compañía telefónica](#ejercicio-4--llamadas-de-una-compañía-telefónica)
+   - a) Duración total de llamadas por nro_origen
+   - b) nro_destino que recibió más llamadas
+   - c) Duración promedio de cada llamada
+5. [`emit` vs `emitIntermediate` vs `emitAll` (y `reduceAll`)](#emit-vs-emitintermediate-vs-emitall-y-reduceall)
 
 ---
 
@@ -633,13 +637,22 @@ FUNCIÓN Map(clave, valor):
 FUNCIÓN Reduce(clave, listaValores):
     // clave: num-cuenta
     // listaValores: cantidad de USD comprada en cada transacción de esa cuenta
-    media ← reduceAll("", promedio)     // media de TODAS las transacciones USD del banco (no solo de esta cuenta)
+    media ← reduceAll("", promedio)
+    // reduceAll(clave, agregador) internamente hace:
+    //     valoresGlobales ← TODOS los valores que llegaron por emitAll(clave, ...)   // acá: [3, 5, 15, 8, 2]
+    //     RETORNAR agregador(valoresGlobales)                                       // acá: promedio([3, 5, 15, 8, 2])
+    // por eso "media" termina valiendo lo mismo en TODAS las invocaciones de Reduce, sea cual sea su propia cuenta
     PARA CADA cantidad EN listaValores HACER
         SI cantidad > media ENTONCES
             Emitir(clave, clave)        // alcanza con una transacción que supere la media
             RETORNAR
         FIN SI
     FIN PARA
+
+FUNCIÓN promedio(lista):
+    // agregador que le pasamos a reduceAll — es una función más, igual que "sum" o "(sort, uniq, len)"
+    // en los ejemplos de Word Frequency e Intersect del resumen
+    RETORNAR Sumar(lista) / len(lista)
 ```
 
 ### Qué hace cada parte
@@ -805,6 +818,169 @@ Reduce(1003, [8, 2]):
 ```
 
 El diagrama muestra el punto clave: cada compra se bifurca en el `Map` hacia dos destinos distintos (la bolsa global sin agrupar, y el grupo de su propia cuenta), y recién en el `Reduce` esos dos caminos se vuelven a juntar — `reduceAll` trae la media calculada sobre la bolsa global, y se la aplica a la lista de transacciones de cada cuenta.
+
+---
+
+# Ejercicio 4 — Llamadas de una compañía telefónica
+
+Ejercicio: dado un listado de tuplas `(nro_origen, nro_destino, timestamp, duracion)` con las llamadas que ocurren por día en una compañía telefónica (`duracion` en segundos), calcular:
+- a) Duración total de las llamadas para cada `nro_origen`.
+- b) El `nro_destino` que recibió más llamadas.
+- c) Duración promedio de cada llamada.
+
+## Supuestos
+
+- `timestamp` no se usa en ninguno de los tres cálculos: ninguno de los incisos pide agrupar por fecha/hora (a diferencia de los ejercicios anteriores), así que no hace falta derivar día ni hora de él.
+- En b) se asume que hay un único `nro_destino` con la cantidad máxima de llamadas recibidas (sin empates). Si hubiera empate, la solución con `emitAll`/`reduceAll` que se usa más abajo los detecta a **todos** (a diferencia del truco de clave constante del Ejercicio 1b, que se queda solo con el primero que encuentra).
+- En c), "duración promedio de cada llamada" se interpreta como un **único número global**: la duración promedio de una llamada cualquiera, considerando todas las llamadas de la compañía (no un promedio agrupado por `nro_origen` ni por `nro_destino`).
+
+---
+
+## a) Duración total de las llamadas por nro_origen
+
+### Pseudocódigo
+
+```
+FUNCIÓN Map(clave, valor):
+    // valor: conjunto de tuplas (nroOrigen, nroDestino, timestamp, duracion)
+    PARA CADA (nroOrigen, nroDestino, timestamp, duracion) EN valor HACER
+        Emitir(nroOrigen, duracion)
+    FIN PARA
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: nro_origen
+    // listaValores: lista de duraciones (en segundos) de las llamadas que hizo ese origen
+    total ← Sumar(listaValores)
+    Emitir(clave, total)
+```
+
+### Qué hace cada parte
+
+- `Map`: ignora `nroDestino` y `timestamp`, y emite `(nroOrigen, duracion)` — el valor no es un contador fijo como en Word Count, sino el dato real que hay que acumular (la duración).
+- Shuffle: agrupa por `nro_origen`, formando por cada uno la lista de duraciones de todas las llamadas que originó.
+- `Reduce`: suma esa lista y devuelve `(nro_origen, duracion_total_en_segundos)`. Mismo patrón que el monto promedio del Ejercicio 3a), pero sumando en vez de promediando.
+
+### Resultado final
+
+Por ejemplo:
+```
+(1122334455, 4820)
+(1166778899, 1200)
+...
+```
+
+---
+
+## b) nro_destino que recibió más llamadas
+
+### Por qué hacen falta dos Jobs
+
+Igual que en el Ejercicio 1b) (URL con más navegaciones): `Reduce` se invoca una vez por clave y nunca ve los datos de otra clave, así que un solo Job puede contar cuántas llamadas recibió cada `nro_destino`, pero no puede en el mismo paso determinar cuál de todos esos destinos es el máximo — hace falta un segundo Job que compare los conteos entre sí.
+
+### Pseudocódigo — Job 1 (conteo de llamadas por nro_destino)
+
+```
+FUNCIÓN Map(clave, valor):
+    PARA CADA (nroOrigen, nroDestino, timestamp, duracion) EN valor HACER
+        Emitir(nroDestino, 1)
+    FIN PARA
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: nro_destino
+    total ← Sumar(listaValores)
+    Emitir(clave, total)     // (nro_destino, cantidad_de_llamadas_recibidas)
+```
+
+### Pseudocódigo — Job 2 (máximo global, con `emitAll`/`reduceAll`)
+
+```
+FUNCIÓN Map(clave, valor):
+    // clave: nro_destino, valor: cantidad (salida del Job 1)
+    emitAll("", valor)                  // aporta al cálculo del máximo global
+    emitIntermediate(clave, valor)      // sigue el flujo normal, sin cambios
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: nro_destino, listaValores: [cantidad] (un solo elemento, viene del Job 1)
+    maxGlobal ← reduceAll("", max)
+    SI listaValores[0] == maxGlobal ENTONCES
+        Emitir(clave, listaValores[0])
+    FIN SI
+```
+
+Esta es la misma técnica que se explica en la sección final del archivo (`emitAll("", cantidad)` + `reduceAll("", max)`, en vez de la clave constante `"max"` con barrido manual): cada `nro_destino` compara su propio conteo contra el máximo global calculado con `reduceAll`, y se emite solo si coincide.
+
+### Ejemplo paso a paso
+
+Salida del Job 1 (3 destinos):
+```
+(1122334455, 12)
+(1155667788, 30)
+(1199001122, 7)
+```
+
+**Job 2 — Map:**
+```
+emitAll("", 12)          emitIntermediate(1122334455, 12)
+emitAll("", 30)          emitIntermediate(1155667788, 30)
+emitAll("", 7)           emitIntermediate(1199001122, 7)
+```
+
+**Cálculo del máximo global (vía `reduceAll`):**
+```
+maxGlobal = max([12, 30, 7]) = 30
+```
+
+**Job 2 — Reduce (una invocación por destino, todas ven `maxGlobal = 30`):**
+```
+Reduce(1122334455, [12]) -> 12 == 30? NO -> no emite nada
+Reduce(1155667788, [30]) -> 30 == 30? SÍ -> Emitir(1155667788, 30)
+Reduce(1199001122, [7])  -> 7  == 30? NO -> no emite nada
+```
+
+**Resultado final:**
+```
+(1155667788, 30)
+```
+
+El número `1155667788` es el `nro_destino` que recibió más llamadas (30 en total).
+
+---
+
+## c) Duración promedio de cada llamada
+
+### Por qué alcanza con un solo Job y una clave constante
+
+Acá no hace falta agrupar por `nro_origen` ni por `nro_destino`: se pide un único número global (la duración promedio de una llamada cualquiera). Para lograr que **todas** las duraciones terminen en la misma invocación de `Reduce`, se manda todo bajo una clave constante — igual que en el Job 2 del Ejercicio 1b), pero acá no hace falta comparar nada, solo promediar.
+
+### Pseudocódigo
+
+```
+FUNCIÓN Map(clave, valor):
+    PARA CADA (nroOrigen, nroDestino, timestamp, duracion) EN valor HACER
+        Emitir("promedio", duracion)      // clave constante -> todas las duraciones van al mismo Reducer
+    FIN PARA
+
+FUNCIÓN Reduce(clave, listaValores):
+    // clave: "promedio" (constante)
+    // listaValores: duración de TODAS las llamadas de la compañía
+    promedio ← Sumar(listaValores) / len(listaValores)
+    Emitir(clave, promedio)
+```
+
+### Qué hace cada parte
+
+- `Map`: ignora `nroOrigen`, `nroDestino` y `timestamp`, y emite cada `duracion` bajo la misma clave `"promedio"`.
+- Shuffle: como hay una sola clave, se arma un único grupo con las duraciones de **todas** las llamadas.
+- `Reduce`: se ejecuta una única vez, con la lista completa de duraciones, y calcula el promedio dividiendo la suma por la cantidad de llamadas.
+
+> Alternativa: también podría resolverse con `emitAll("", duracion)` en el `Map` y `reduceAll("", promedio)` en el `Reduce` (como en el Ejercicio 3c), pero acá no hace falta — como el resultado que se pide es un único valor de salida (no hay que compararlo contra nada por clave), alcanza con el truco de la clave constante, sin necesitar el canal global de `emitAll`.
+
+### Resultado final
+
+Un único par:
+```
+("promedio", 187.4)
+```
 
 ---
 
