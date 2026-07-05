@@ -103,7 +103,7 @@ El request atraviesa: **Edge Cache** + **Google Front End** (validaciones de pri
 
 ### Instancias de Procesamiento
 
-![AppEngine Front End balanceando carga hacia App Servers con varias Instances, Auto Scalable](imagenes/Clase16_imagenes/pag-19.png)
+![alt text](image-11.png)
 
 - **Instancias Dinámicas**: se crean dinámicamente; procesan requests pequeños; fuerzan respuestas rápidas y manejo sin estado (*stateless*); pueden aceptar requests externos (GET) e internos (mensajes en colas 'push').
 - **Instancias Residentes**: creadas de forma manual mediante configuración; no existen límites para su empleo y se puede elegir su capacidad de cómputo; procesan requests largos, especialmente en *batchs* con o sin estado.
@@ -149,7 +149,8 @@ Las entidades del Datastore se organizan en **jerarquías** (*Path*, ej. `Arg �
 
 ### Columnas
 
-![Tabla con Row keys, Column families (Column family 1, 2) y Columnas, con valores versionados en el tiempo (t1, t2, t3)](imagenes/Clase16_imagenes/pag-26.png)
+
+![alt text](image-12.png)
 
 **Claves, datos y columnas:**
 - Solo almacena pares **clave-datos**.
@@ -158,7 +159,7 @@ Las entidades del Datastore se organizan en **jerarquías** (*Path*, ej. `Arg �
 
 ### Tablets
 
-![Clients consultan un Front-end server pool, que distribuye a Nodes de un Cloud Bigtable cluster, cada uno con sus SSTables y Shared Log sobre Colossus](imagenes/Clase16_imagenes/pag-27.png)
+![alt text](image-13.png)
 
 - **Tablets**: conjunto de filas **consecutivas** de acuerdo a la clave.
 - Es la **unidad de balanceo** de BigTable. Permite escalar el sistema.
