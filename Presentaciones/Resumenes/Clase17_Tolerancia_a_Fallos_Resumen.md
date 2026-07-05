@@ -64,14 +64,12 @@ Técnicas para volver a un estado correcto luego de detectar un error:
 La redundancia es la estrategia central de tolerancia a fallos: duplicar componentes (hardware, procesos, datos) para que la falla de uno no implique la falla del sistema completo. Tipos de replicación:
 
 - **Pasiva**: un nodo primario procesa todas las solicitudes y replica su estado periódicamente a los nodos *backup*, que no procesan solicitudes hasta que el primario falla.
+![alt text](imagenes/Clase17_imagenes/image-14.png)
 - **Activa**: todos los nodos replicados procesan las mismas solicitudes en paralelo y de forma determinística, manteniéndose sincronizados todo el tiempo.
+![alt text](imagenes/Clase17_imagenes/image-15.png)
 - **Semi-activa (leader-follower)**: un nodo líder coordina y los demás (*followers*) ejecutan las mismas operaciones pero bajo la coordinación del líder, combinando características de ambos esquemas.
+![alt text](imagenes/Clase17_imagenes/image-16.png)
 
-![Replicación pasiva](imagenes/Clase17_imagenes/pag-14.png)
-
-![Replicación activa](imagenes/Clase17_imagenes/pag-15.png)
-
-![Replicación semi-activa (leader-follower)](imagenes/Clase17_imagenes/pag-16.png)
 
 ### Disponibilidad (Availability)
 

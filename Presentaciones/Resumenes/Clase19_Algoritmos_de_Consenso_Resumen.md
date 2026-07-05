@@ -26,7 +26,6 @@
 - Mensajes enviados siempre en la misma dirección (ej. sentido horario).
 - Al comienzo del algoritmo, todos los procesos son marcados como *no participantes*.
 
-![Anillo - condiciones iniciales](imagenes/Clase19_imagenes/pag-05.png)
 
 **Lógica del algoritmo:**
 - Un proceso P<sub>i</sub> inicia la elección: se marca como *participando* y envía un mensaje en sentido horario indicando que él es el líder.

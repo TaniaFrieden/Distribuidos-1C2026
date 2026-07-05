@@ -138,14 +138,14 @@ Combinando clusters redundantes (alta disponibilidad interna) encadenados entre 
 
 ### CAP Theorem
 
-![alt text](image.png)
+![alt text](imagenes/Clase11_imagenes/image.png)
 
 Eric Brewer ('98): en sistemas distribuidos con almacenamiento es posible garantizar solo **2 de los siguientes 3 atributos** frente a un particionamiento de red:
 - **Consistency**: también conocida como repetibilidad de respuesta de todos los nodos frente a un mismo pedido.
 - **Availability**: capacidad del sistema de responder a todo pedido.
 - **Partition Tolerance**: capacidad de lidiar con la formación de grupos aislados de nodos.
 
-![alt text](image-1.png)
+![alt text](imagenes/Clase11_imagenes/image-1.png)
 
 - Se puede sacrificar **Consistency** o **Availability**, pero no necesariamente es todo o nada.
 - Sacrificar **Partition Tolerance** significa no proveer un sistema distribuido (ya que en un sistema realmente distribuido las particiones de red son inevitables).

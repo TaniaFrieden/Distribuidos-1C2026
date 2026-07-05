@@ -45,7 +45,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Almacenamiento | Cubos de Información
 
-![alt text](image-2.png)
+![alt text](imagenes/Clase13_imagenes/image-2.png)
 - Normalmente: mantienen **vistas materializadas** con pre-cálculos estadísticos.
 - Se crean grillas agrupadas por diferentes dimensiones.
 - Operaciones como **SUM, COUNT, MAX, MIN, AVG** se consultan a estos cubos (en el ejemplo, un cubo cruzando `date_id` x `product_id` x `quantity`).
@@ -56,7 +56,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Leader based
 
-![alt text](image-3.png)
+![alt text](imagenes/Clase13_imagenes/image-3.png)
 
 - Una réplica se designa como **master** o **leader**.
 - Otras réplicas se designan **mirrors**, **slaves** o **followers**.
@@ -66,7 +66,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Multi-leader based
 
-![alt text](image-4.png)
+![alt text](imagenes/Clase13_imagenes/image-4.png)
 
 - Modelo normal en escenarios de **múltiples data-centers**.
 - Frente a caídas de un data-center, se puede promover al otro como líder global.
@@ -75,7 +75,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Leaderless based
 
-![alt text](image-5.png)
+![alt text](imagenes/Clase13_imagenes/image-5.png)
 
 - Sistema de replicación **totalmente distribuido**.
 - Las réplicas deben **sincronizarse mutuamente**.
@@ -85,7 +85,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Particionamiento | Motivaciones
 
-![alt text](image-6.png)
+![alt text](imagenes/Clase13_imagenes/image-6.png)
 
 Distintos puntos de contacto con la estrategia de Replicación:
 - **Performance**: velocidades de escritura, velocidades de lectura.
@@ -135,7 +135,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Enfoque Naive
 
-![alt text](image-7.png)
+![alt text](imagenes/Clase13_imagenes/image-7.png)
 
 - La información es almacenada en memoria por el servidor.
 - Los clientes acceden mediante *requests* a escribir o leer las páginas.
@@ -144,7 +144,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Migración de Memory Pages
 
-![alt text](image-8.png)
+![alt text](imagenes/Clase13_imagenes/image-8.png)
 
 - La información es almacenada en memoria por el servidor y **delegada en los clientes**.
 - Los clientes pueden optimizar la localidad de acceso pidiendo una *memory page* prestada.
@@ -153,7 +153,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Replicación de Memory Pages (solo lectura)
 
-![alt text](image-9.png)
+![alt text](imagenes/Clase13_imagenes/image-9.png)
 
 - Favorece escenarios con **muchas lecturas y pocas escrituras**.
 - Las **escrituras son coordinadas por el servidor**.
@@ -162,7 +162,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Replicación de Memory Pages (lectura-escritura)
 
-![alt text](image-10.png)
+![alt text](imagenes/Clase13_imagenes/image-10.png)
 
 - El servidor mantiene las páginas de memoria hasta que los clientes las requieren.
 - Los **clientes toman control total de las réplicas**.

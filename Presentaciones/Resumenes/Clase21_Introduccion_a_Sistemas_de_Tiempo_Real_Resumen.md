@@ -14,7 +14,7 @@
 - **Hard RT**: se debe evitar todo fallo relacionado con el tiempo de *delivery*; perder un *deadline* o plazo de respuesta es un **fallo total** (ej. marcapasos).
 - **Soft RT**: los fallos relacionados con el tiempo de *delivery* pueden ser admitidos ocasionalmente (con cierta frecuencia documentada); la utilidad de un resultado disminuye tras el *deadline* (ej. control de aeronaves en ciertos subsistemas).
 
-![Hard RT (marcapasos) vs Soft RT (aeronave)](Clase21_imagenes/pag-04.png)
+  ![alt text](imagenes/Clase21_imagenes/image-28.png)
 
 ### Previsibilidad
 
@@ -32,9 +32,9 @@ RT requiere comunicación **fiable y sincrónica** (con *deadlines* bien definid
 
 **Ejemplos de arquitecturas de comunicación RT** en automatización industrial (redes jerárquicas conectando HMIs, controladores, sensores/actuadores y robótica) y en la industria automotriz (zonas con switches dedicados conectando sensores, cámaras, radar/lidar y sistemas de control del vehículo mediante Ethernet automotriz de distintas velocidades).
 
-![Comunicación en automatización industrial](Clase21_imagenes/pag-07.png)
+![Comunicación en automatización industrial](imagenes/Clase21_imagenes/pag-07.png)
 
-![Comunicación en industria automotriz (arquitectura por zonas)](Clase21_imagenes/pag-08.png)
+![Comunicación en industria automotriz (arquitectura por zonas)](imagenes/Clase21_imagenes/pag-08.png)
 
 ### Fault Tolerance en RT
 
@@ -48,7 +48,7 @@ Los sistemas RT deben ser tolerantes a **fallos de tiempo**, con distintos tipos
 - **Event-Triggered**: el servidor procesa cada evento a medida que el cliente lo envía, respondiendo de forma asincrónica según llegan los requests (e1, e2, ...).
 - **Time-Triggered**: el procesamiento ocurre en instantes de tiempo predefinidos, independientemente de cuándo llega cada evento, garantizando ventanas de tiempo (*slots*) fijas para cada ciclo de trabajo.
 
-![Paradigmas de trabajo: Event-Triggered vs Time-Triggered](Clase21_imagenes/pag-10.png)
+![Paradigmas de trabajo: Event-Triggered vs Time-Triggered](imagenes/Clase21_imagenes/pag-10.png)
 
 ---
 
@@ -75,13 +75,13 @@ Distintos escenarios cotidianos plantean un sistema a controlar de forma manual 
 
 La salida del sistema **no afecta** la acción de control: el Controlador recibe una Referencia y genera una Entrada hacia la Planta, la cual produce una Salida, sin retroalimentación (aunque puede haber Perturbaciones externas que afecten la Planta).
 
-![Control a lazo abierto](Clase21_imagenes/pag-14.png)
+![Control a lazo abierto](imagenes/Clase21_imagenes/pag-14.png)
 
 ### Control a Lazo Cerrado (Feedback)
 
 Se utiliza información sobre el **estado del sistema** (la Salida) para actuar sobre el sistema y llevarlo a los valores deseados: la Salida se realimenta y se compara contra la Referencia, generando una señal de Error que alimenta al Controlador.
 
-![Control a lazo cerrado (feedback)](Clase21_imagenes/pag-15.png)
+![Control a lazo cerrado (feedback)](imagenes/Clase21_imagenes/pag-15.png)
 
 ### Programación y Tiempo Real
 
@@ -99,7 +99,7 @@ Fue la primera misión a Marte usando rovers. A los pocos días de aterrizar, se
 - **Watchdog** que reiniciaba el sistema al perderse el *deadline* de una tarea crítica.
 - **Inversión de prioridades**: una tarea de alta prioridad era interrumpida (bloqueada) por una tarea de prioridad media, debido a que una tarea de baja prioridad retenía un recurso (*lock*) que la tarea de alta prioridad necesitaba, y era constantemente desalojada por las tareas de prioridad intermedia.
 
-![Mars Pathfinder - inversión de prioridades](Clase21_imagenes/pag-17.png)
+  ![alt text](imagenes/Clase21_imagenes/image-29.png)
 
 ### Therac-25
 
@@ -107,7 +107,6 @@ Consistía en un acelerador de electrones y un sistema de control *real-time* pa
 - **Race Conditions**: la interfaz de usuario mostraba un modo erróneo al operador durante el *bootstrapping* del magnetrón.
 - **Overflow**: se usaba 1 byte para el contador de errores detectados, que hacía *overflow* a 0 al detectar 256 chequeos fallidos.
 
-![Therac-25 - interfaz del sistema de control](Clase21_imagenes/pag-18.png)
 
 ### Ariane 5
 
@@ -115,10 +114,8 @@ Desarrollo de la Agencia Espacial Europea para colocar satélites en órbita. En
 - **Cast Overflow**: el algoritmo de navegación asumía la posibilidad de castear valores de 64 bits a variables de 16 bits sin chequear overflow.
 - **Error in Redundant Systems**: los sistemas redundantes reprodujeron exactamente las mismas condiciones (por lo que ambos fallaron de la misma manera, anulando el beneficio de la redundancia).
 
-![Ariane 5 - arquitectura del sistema de navegación](Clase21_imagenes/pag-19.png)
 
 ### Mt. Gox (caso No-RT)
 
 Uno de los *exchanges* de Bitcoin más grandes del mundo. En 2011, un *glitch* en el software de generación de transacciones introdujo un hash erróneo de la dirección del receptor. Las transacciones de Bitcoin pueden ser incobrables (*unredeemable*) por definición, y no había mecanismo para considerar la detección de este tipo de errores. Cerca de 2.500 bitcoins fueron aplicados en transacciones incobrables hasta que se detectó el error.
 
-![Mt. Gox - transacción esperada vs. transacción real generada](Clase21_imagenes/pag-20.png)

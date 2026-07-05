@@ -19,7 +19,7 @@ Cada computadora puede tener su **reloj local**, o bien sincronizarse contra una
 
 Los relojes físicos brindan la fecha y hora del día, y pueden ser de cuarzo, atómicos o basados en GPS. Los cambios de temperatura, presión y humedad los descalibran, efecto conocido como ***drift***.
 
-![Hardware de relojes físicos (GPS, atómico, rack mount time server)](imagenes/Clase20_imagenes/pag-06.png)
+![alt text](imagenes/Clase20_imagenes/image-17.png)
 
 ### Referencias Globales
 
@@ -28,19 +28,18 @@ Los relojes físicos brindan la fecha y hora del día, y pueden ser de cuarzo, a
 - **GPS time**: basado en relojes atómicos en la Tierra; no recibe ajustes pero permite ajustar satélites.
 - **TAI** (Temps Atomique International): 200 relojes atómicos en 70 países; no recibe ajustes astronómicos.
 
-![Referencias globales de tiempo (GMT, UTC, GPS, TAI)](imagenes/Clase20_imagenes/pag-07.png)
 
 ### Drift
 
 Los relojes físicos no son confiables para su comparación entre sí debido al efecto de *drift*. Por eso hay que sincronizarlos periódicamente: medir el desvío respecto de un reloj de referencia (UTC, GPS, etc.) y aplicar una corrección o compensación lineal cambiando la frecuencia del reloj local — **nunca atrasando un reloj** de golpe. También es necesario sincronizar al despertar la computadora.
 
-![Drift: reloj adelantado, ideal y atrasado respecto de la referencia](imagenes/Clase20_imagenes/pag-08.png)
+![alt text](imagenes/Clase20_imagenes/image-18.png)
 
 **Algoritmo de Cristian**: realiza una compensación del *delay* de red al obtener la medida de tiempo. El cliente envía un request en T<sub>0</sub> y recibe la respuesta en T<sub>1</sub>; asumiendo delays de red constantes y sin tiempo de procesamiento, el nuevo tiempo se calcula como:
 
 `T_new = T_server + (T1 - T0) / 2`
 
-![Algoritmo de Cristian](imagenes/Clase20_imagenes/pag-09.png)
+![alt text](imagenes/Clase20_imagenes/image-19.png)
 
 ### NTP (Network Time Protocol)
 
@@ -56,7 +55,7 @@ Los relojes físicos no son confiables para su comparación entre sí debido al 
 - Estrato N: servidores sincronizados con servidores en estrato N-1.
 - Los servidores del mismo estrato pueden sincronizarse entre sí mediante conexiones *peer-to-peer*. Los mensajes se envían de forma no confiable (*UDP* puerto 123).
 
-![NTP - estructura de servidores por estratos](imagenes/Clase20_imagenes/pag-11.png)
+![alt text](imagenes/Clase20_imagenes/image-20.png)
 
 **Modos de sincronización:**
 - **Multicast/broadcast**: usado en LANs de alta velocidad, eficiente pero de baja precisión.
@@ -134,10 +133,6 @@ En **sistemas distribuidos**, un algoritmo/protocolo es:
 - **Steadiness (σ)**: máxima diferencia entre el mínimo y máximo tiempo de delivery de cualquier mensaje recibido por un proceso — define qué tan constante (*steady*) es la recepción de mensajes. `σ = max(T_Dmax - T_Dmin)`.
 - **Tightness (τ)**: máxima diferencia entre los tiempos de delivery de un mismo mensaje *m* entre distintos procesos — define la simultaneidad con la que un mensaje es recibido por múltiples procesos.
 
-![Sincronismo - tiempo de delivery y timeout](imagenes/Clase20_imagenes/pag-26.png)
-
-![Sincronismo - steadiness y tightness](imagenes/Clase20_imagenes/pag-27.png)
-
 ### Protocolos Clock-driven
 
 A diferencia de los protocolos *time-driven* (basados en timeouts), los protocolos **clock-driven** utilizan relojes sincronizados entre los procesos para coordinar el envío y entrega de mensajes dentro de ventanas de tiempo predefinidas (Δ), logrando que el sistema sea *steady* (constante) y *tight* (simultáneo).
@@ -152,13 +147,13 @@ A diferencia de los protocolos *time-driven* (basados en timeouts), los protocol
 
 El envío de un mensaje no es lo mismo que su **delivery**: el delivery consiste en procesar el mensaje, provocando eventualmente cambios en el estado del proceso. Los mensajes se mantienen en una cola (*hold-back queue*) que permite controlar el momento en que se libera el mensaje hacia la cola de delivery, permitiendo demorarlo o incluso reordenar mensajes.
 
-![Hold-back queue para controlar el delivery de mensajes](imagenes/Clase20_imagenes/pag-33.png)
+![alt text](imagenes/Clase20_imagenes/image-21.png)
 
 ### Tipos de Orden
 
 - **Orden Sincrónico**: todo mensaje posee el mismo timestamp tanto en el proceso emisor como en el receptor (la transmisión de mensajes insume tiempo nulo).
 
-![Orden sincrónico](imagenes/Clase20_imagenes/pag-34.png)
+![alt text](imagenes/Clase20_imagenes/image-22.png)
 
 - **Orden FIFO**: todo par de mensajes desde un mismo emisor a un mismo receptor se entregan en el orden en que fueron enviados.
 
