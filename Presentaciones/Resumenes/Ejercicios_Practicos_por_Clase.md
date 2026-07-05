@@ -95,7 +95,6 @@ Todos son variantes del mismo problema (sincronizar 3 procesos en un punto de ej
   - URL con más navegaciones registradas
   - Listado de emails con más de 10 navegaciones registradas. Utilice pseudo-código e indique supuestos de ser necesario.
 
-> Nota: existe además un archivo dedicado con las resoluciones completas de varios de estos ejercicios: `Presentaciones/Resumenes/Clase10_Ejercicios_MapReduce.md`.
 
 ---
 
@@ -114,7 +113,6 @@ Todos son variantes del mismo problema (sincronizar 3 procesos en un punto de ej
 - **[2025-07-17]** Reconstruya el diagrama de tiempo de los eventos a, b, c, d, e, f, g para la comunicación de 3 procesos dados los siguientes vectores de relojes indicados. Establezca la relación entre los pares de eventos a-d y entre a-f.
   - Vectores de relojes: a-[0,1,0]  b-[1,1,0]  c-[2,1,0]  d-[2,2,0]  e-[0,0,1]  f-[3,1,1]  g-[2,3,0]
 
-> Nota: en el examen **2025-02-13** la pregunta práctica 8 era también de vectores de relojes, pero no se cuenta con la foto/enunciado completo en la carpeta (marcado por los autores como "no tenemos foto").
 
 ---
 
@@ -198,8 +196,3 @@ Estos son, por lejos, los ejercicios prácticos más repetidos (siempre la últi
 
 ---
 
-## Fuentes
-
-- `INTEGRADORES/RESUELTOS.pdf` (exámenes 2022-08-02, 2022-08-09, 2023-07-25, 2024-07-08, 2024-07-16, 2024-12-19, 2025-02-13, 2025-02-20).
-- `INTEGRADORES/20250306-E.jpeg`, `20250703-E.jpeg`, `20250717-E.jpeg`, `20250724-E.HEIC`, `20250227/20250227-E.HEIC` (exámenes no incluidos aún en RESUELTOS.pdf).
-- Clasificación por clase hecha en base a los títulos y contenidos de `Presentaciones/Resumenes/Clase*.md`.
