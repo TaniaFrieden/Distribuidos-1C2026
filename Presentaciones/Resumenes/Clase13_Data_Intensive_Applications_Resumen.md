@@ -45,8 +45,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Almacenamiento | Cubos de Información
 
-![Cubo de información cruzando date_id x product_id x quantity con totales](imagenes/Clase13_imagenes/pag-08.png)
-
+![alt text](image-2.png)
 - Normalmente: mantienen **vistas materializadas** con pre-cálculos estadísticos.
 - Se crean grillas agrupadas por diferentes dimensiones.
 - Operaciones como **SUM, COUNT, MAX, MIN, AVG** se consultan a estos cubos (en el ejemplo, un cubo cruzando `date_id` x `product_id` x `quantity`).
@@ -57,7 +56,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Leader based
 
-![Leader Replica recibe Read/Writes y replica vía Mirroring a Follower Replicas, que solo aceptan lecturas](imagenes/Clase13_imagenes/pag-10.png)
+![alt text](image-3.png)
 
 - Una réplica se designa como **master** o **leader**.
 - Otras réplicas se designan **mirrors**, **slaves** o **followers**.
@@ -67,7 +66,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Multi-leader based
 
-![Dos Leader Replicas en distintos data-centers replicándose mutuamente con resolución de conflictos, cada uno con sus Follower Replicas](imagenes/Clase13_imagenes/pag-11.png)
+![alt text](image-4.png)
 
 - Modelo normal en escenarios de **múltiples data-centers**.
 - Frente a caídas de un data-center, se puede promover al otro como líder global.
@@ -76,7 +75,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Replicación | Leaderless based
 
-![Cuatro réplicas sincronizándose mutuamente todas contra todas, todas aceptando Read/Writes](imagenes/Clase13_imagenes/pag-12.png)
+![alt text](image-5.png)
 
 - Sistema de replicación **totalmente distribuido**.
 - Las réplicas deben **sincronizarse mutuamente**.
@@ -86,7 +85,7 @@ A diferencia del modelo relacional (que almacena fila por fila), el modelo colum
 
 ### Particionamiento | Motivaciones
 
-![Replicación simple a un Datastore vs Particionamiento en Partition 1-4](imagenes/Clase13_imagenes/pag-13.png)
+![alt text](image-6.png)
 
 Distintos puntos de contacto con la estrategia de Replicación:
 - **Performance**: velocidades de escritura, velocidades de lectura.
@@ -136,7 +135,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Enfoque Naive
 
-![Server centraliza las Memory Pages; Clients piden locks que pueden ser aceptados o denegados](imagenes/Clase13_imagenes/pag-20.png)
+![alt text](image-7.png)
 
 - La información es almacenada en memoria por el servidor.
 - Los clientes acceden mediante *requests* a escribir o leer las páginas.
@@ -145,7 +144,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Migración de Memory Pages
 
-![Server delega Page A a un Client mediante Page migration; otros clientes que piden la misma página quedan bloqueados (Page request)](imagenes/Clase13_imagenes/pag-21.png)
+![alt text](image-8.png)
 
 - La información es almacenada en memoria por el servidor y **delegada en los clientes**.
 - Los clientes pueden optimizar la localidad de acceso pidiendo una *memory page* prestada.
@@ -154,7 +153,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Replicación de Memory Pages (solo lectura)
 
-![Server replica páginas en modo read-only a múltiples Clients, invalidando réplicas cuando hay un write](imagenes/Clase13_imagenes/pag-22.png)
+![alt text](image-9.png)
 
 - Favorece escenarios con **muchas lecturas y pocas escrituras**.
 - Las **escrituras son coordinadas por el servidor**.
@@ -163,7 +162,7 @@ Ejemplo: la tabla `Sales` se divide en una partición con las columnas `date_id,
 
 ### DSM | Replicación de Memory Pages (lectura-escritura)
 
-![Write Sequencer mantiene las páginas hasta que los clientes las requieren, propagando Page updates entre réplicas](imagenes/Clase13_imagenes/pag-23.png)
+![alt text](image-10.png)
 
 - El servidor mantiene las páginas de memoria hasta que los clientes las requieren.
 - Los **clientes toman control total de las réplicas**.
